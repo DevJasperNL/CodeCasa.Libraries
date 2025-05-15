@@ -1,0 +1,32 @@
+name-template: '$RESOLVED_VERSION'
+tag-template: '$RESOLVED_VERSION'
+change-template: '- #$NUMBER $TITLE'
+sort-direction: ascending
+categories:
+  - title: '💥 Breaking changes'
+    label: 'pr: breaking change'
+
+  - title: '✨ New features'
+    label: 'pr: new-feature'
+
+  - title: '⚡ Enhancements'
+    label: 'pr: enhancement'
+
+  - title: '🐛 Bug Fixes'
+    label: 'pr: bugfix'
+    
+  - title: '📖 Documentation'
+    label: 'pr: documentation'
+
+  - title: '⬆️ Dependency Updates'
+    label: 'pr: dependency-update'
+
+include-labels:
+  - 'pr: breaking change'
+  - 'pr: new-feature'
+  - 'pr: enhancement'
+  - 'pr: bugfix'
+  - 'pr: documentation'
+  - 'pr: dependency-update'
+
+template: '$CHANGES'
