@@ -1,4 +1,9 @@
 # CodeCasa.Libraries
+
+[![GitHub license](https://img.shields.io/github/license/DevJasperNL/CodeCasa.Libraries?label=License)](https://github.com/DevJasperNL/CodeCasa.Libraries?tab=MIT-1-ov-file)
+[![GitHub release](https://img.shields.io/github/v/release/DevJasperNL/CodeCasa.Libraries?label=Release)](https://github.com/DevJasperNL/CodeCasa.Libraries/releases/latest)
+[![Build Status](https://github.com/DevJasperNL/CodeCasa.Libraries/actions/workflows/ci-build-and-test.yml/badge.svg)](https://github.com/DevJasperNL/CodeCasa.Libraries/actions/workflows/ci-build-and-test.yml)
+
 A collection of .NET libraries focused on smart home automation and general-purpose utilities.
 
 ## AutomationPipelines
