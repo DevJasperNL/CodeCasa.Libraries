@@ -198,7 +198,7 @@ public sealed class PipelineTests
     }
 
     [TestMethod]
-    public void DisableNode_ChangesOutputToDefault()
+    public void PassThroughNode_ChangesOutputToDefault()
     {
         const string defaultValue = "Test1";
         const string nodeValue = "Test2";
@@ -219,7 +219,7 @@ public sealed class PipelineTests
         Assert.AreEqual(nodeValue, outputHandlerResult);
         Assert.AreEqual(nodeValue, pipeline.Output);
 
-        node1.Enabled = false;
+        node1.PassThrough = true;
 
         Assert.AreEqual(defaultValue, emittedOutput);
         Assert.AreEqual(defaultValue, outputHandlerResult);
@@ -227,7 +227,7 @@ public sealed class PipelineTests
     }
 
     [TestMethod]
-    public void DisableNode_ChangesOutputToPreviousNodeOutput()
+    public void PassThroughNode_ChangesOutputToPreviousNodeOutput()
     {
         const string defaultValue = "Test1";
         const string firstNodeValue = "Test2";
@@ -251,7 +251,7 @@ public sealed class PipelineTests
         Assert.AreEqual(secondNodeValue, outputHandlerResult);
         Assert.AreEqual(secondNodeValue, pipeline.Output);
 
-        node2.Enabled = false;
+        node2.PassThrough = true;
 
         Assert.AreEqual(firstNodeValue, emittedOutput);
         Assert.AreEqual(firstNodeValue, outputHandlerResult);

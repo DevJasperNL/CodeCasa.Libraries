@@ -9,7 +9,8 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     private readonly Subject<TState?> _newOutputSubject = new();
     private TState? _input;
     private TState? _output;
-    private bool _enabled = true;
+    private bool _passThroughNextInput;
+    private bool _passThrough;
 
     /// <inheritdoc />
     public IObservable<TState?> OnNewOutput => _newOutputSubject.AsObservable();
@@ -21,7 +22,12 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
         set
         {
             _input = value;
-            if (!Enabled)
+            if (_passThroughNextInput)
+            {
+                PassThrough = true;
+                return;
+            }
+            if (PassThrough)
             {
                 SetOutputInternal(_input);
                 return;
@@ -39,11 +45,11 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     }
 
     /// <summary>
-    /// Disables the node. If the node is disabled, it will pass its input to the output without processing it.
+    /// Turns on pass-through mode for the node, meaning it will pass the input directly to the output without processing it.
     /// </summary>
-    protected void DisableNode()
+    protected void PassInputThrough()
     {
-        Enabled = false;
+        PassThrough = true;
     }
 
     /// <summary>
@@ -55,28 +61,57 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
         get => _output;
         protected set
         {
-            Enabled = true;
+            PassThrough = false;
+            _passThroughNextInput = false;
 
             SetOutputInternal(value);
         }
     }
 
     /// <inheritdoc />
-    public bool Enabled
+    public bool PassThrough
     {
-        get => _enabled;
+        get => _passThrough;
         set
         {
-            if (_enabled == value)
+            // Always reset _disableOnNextInput when Enabled is explicitly called.
+            _passThroughNextInput = false;
+
+            if (_passThrough == value)
             {
                 return;
             }
-            _enabled = value;
-            if (!_enabled)
+            
+            _passThrough = value;
+            if (_passThrough)
             {
                 SetOutputInternal(_input);
             }
         }
+    }
+
+    /// <summary>
+    /// Changes the output state of the node and enables pass-through mode after the next input.
+    /// This can be useful for nodes that should influence pipeline behavior once. For example a light switch or a motion sensor detection.
+    /// </summary>
+    protected void ChangeOutputAndTurnOnPassThroughOnNextInput(TState output)
+    {
+        Output = output;
+        TurnOnPassThroughOnNextInput();
+    }
+
+    /// <summary>
+    /// Keeps the current output but enables pass-through mode after receiving the next input.
+    /// This can be useful for nodes that  should influence pipeline behavior once. For example a light switch or a motion sensor detection.
+    /// </summary>
+    protected void TurnOnPassThroughOnNextInput()
+    {
+        if (PassThrough)
+        {
+            return;
+        }
+
+        _passThroughNextInput = true;
     }
 
     private void SetOutputInternal(TState? output)

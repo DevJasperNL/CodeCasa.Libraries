@@ -23,7 +23,7 @@ public sealed class PipelineNodeTests
     }
 
     [TestMethod]
-    public void Disabled_Input_ExistingInputPassed()
+    public void PassThrough_ExistingInputPassed()
     {
         const string testValue = "Test";
         string? emittedOutput = null;
@@ -36,14 +36,14 @@ public sealed class PipelineNodeTests
         Assert.IsNull(emittedOutput);
         Assert.IsNull(pipelineNode.Output);
 
-        pipelineNode.Enabled = false;
+        pipelineNode.PassThrough = true;
             
         Assert.AreEqual(testValue, emittedOutput);
         Assert.AreEqual(testValue, pipelineNode.Output);
     }
 
     [TestMethod]
-    public void Disabled_Input_NewInputPassed()
+    public void PassThrough_NewInputPassed()
     {
         const string testValue = "Test";
         string? emittedOutput = null;
@@ -51,7 +51,7 @@ public sealed class PipelineNodeTests
         var pipelineNode = new Mock<PipelineNode<string>>().Object;
         pipelineNode.OnNewOutput.Subscribe(o => emittedOutput = o);
 
-        pipelineNode.Enabled = false;
+        pipelineNode.PassThrough = true;
             
         Assert.IsNull(emittedOutput);
         Assert.IsNull(pipelineNode.Output);
