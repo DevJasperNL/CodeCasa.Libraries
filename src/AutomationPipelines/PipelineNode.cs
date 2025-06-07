@@ -3,7 +3,10 @@ using System.Reactive.Subjects;
 
 namespace AutomationPipelines;
 
-/// <inheritdoc />
+/// <summary>
+/// Implementation of <see cref="IPipelineNode{TState}"/> meant to manage its own output.
+/// Has convenient protected methods to control the output and pass-through behavior.
+/// </summary>
 public abstract class PipelineNode<TState> : IPipelineNode<TState>
 {
     private readonly Subject<TState?> _newOutputSubject = new();
@@ -39,7 +42,7 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     /// <summary>
     /// Called when the input is received.
     /// </summary>
-    protected virtual void InputReceived(TState? state)
+    protected virtual void InputReceived(TState? input)
     {
         // Ignore input by default.
     }
@@ -94,7 +97,7 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     /// Changes the output state of the node and enables pass-through mode after the next input.
     /// This can be useful for nodes that should influence pipeline behavior once. For example a light switch or a motion sensor detection.
     /// </summary>
-    protected void ChangeOutputAndTurnOnPassThroughOnNextInput(TState output)
+    protected void ChangeOutputAndTurnOnPassThroughOnNextInput(TState? output)
     {
         Output = output;
         TurnOnPassThroughOnNextInput();
