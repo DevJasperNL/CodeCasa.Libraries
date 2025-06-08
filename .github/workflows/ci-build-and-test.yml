@@ -41,7 +41,7 @@ jobs:
       - name: 🔖 Get version from latest tag
         id: version
         run: |
-          latest=$(git describe --tags $(git rev-list --tags --max-count=1))
+          latest="test"
           echo Current version:    $latest
           echo "version=$latest" >> $GITHUB_OUTPUT
 
