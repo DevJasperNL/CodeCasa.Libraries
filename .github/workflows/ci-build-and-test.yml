@@ -38,16 +38,6 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: 🔖 Get version from latest tag
-        id: version
-        run: |
-          latest="test"
-          echo Current version:    $latest
-          echo "version=$latest" >> $GITHUB_OUTPUT
-
-      - name: Print version
-        run: echo "Version is ${{ steps.version.outputs.version }}"
-
       - name: 🛠️ Build code
         run: dotnet build --configuration Release -p:TreatWarningsAsErrors=true
 
