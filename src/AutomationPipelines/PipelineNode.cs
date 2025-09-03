@@ -56,8 +56,8 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     }
 
     /// <summary>
-    /// Sets the output state of the node. This will trigger the processing of the input.
-    /// If the node is disabled, it will be enabled when setting an output value.
+    /// Sets the output state of the node.
+    /// If pass-through mode is enabled for this node it will be disabled when setting an output value.
     /// </summary>
     public TState? Output
     {
@@ -77,7 +77,7 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
         get => _passThrough;
         set
         {
-            // Always reset _disableOnNextInput when Enabled is explicitly called.
+            // Always reset _passThroughNextInput when PassThrough is explicitly called.
             _passThroughNextInput = false;
 
             if (_passThrough == value)
