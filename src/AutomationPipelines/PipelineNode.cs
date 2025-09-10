@@ -44,15 +44,7 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
     /// </summary>
     protected virtual void InputReceived(TState? input)
     {
-        // Ignore input by default.
-    }
-
-    /// <summary>
-    /// Turns on pass-through mode for the node, meaning it will pass the input directly to the output without processing it.
-    /// </summary>
-    protected void PassInputThrough()
-    {
-        PassThrough = true;
+        // As most node implementations will set their own output, we ignore input as the default behavior.
     }
 
     /// <summary>
@@ -71,8 +63,11 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
         }
     }
 
-    /// <inheritdoc />
-    public bool PassThrough
+    /// <summary>
+    /// If set to true, the node will pass its input to the output without processing it.
+    /// If true, InputReceived is not called.
+    /// </summary>
+    protected bool PassThrough
     {
         get => _passThrough;
         set

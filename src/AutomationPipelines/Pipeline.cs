@@ -33,7 +33,6 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     public IPipeline<TState> SetDefault(TState state)
     {
         Input = state;
-        _logger?.LogDebug($"Default value set to {state}.");
         return this;
     }
 
