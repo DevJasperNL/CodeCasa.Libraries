@@ -6,11 +6,6 @@
 public interface IPipelineNode<TState>
 {
     /// <summary>
-    /// If set to true, the node will pass its input to the output without processing it.
-    /// </summary>
-    bool PassThrough { get; set; }
-
-    /// <summary>
     /// Sets the input state of the node. This will trigger the processing of the input.
     /// </summary>
     TState? Input { get; set; }

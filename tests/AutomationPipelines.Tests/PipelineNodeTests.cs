@@ -11,7 +11,7 @@ public sealed class PipelineNodeTests
         // Arrange
         string? emittedOutput = null;
 
-        var pipelineNode = new Mock<PipelineNode<string>>().Object;
+        var pipelineNode = new TestablePipelineNode<string>();
         pipelineNode.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         // Act
@@ -28,7 +28,7 @@ public sealed class PipelineNodeTests
         const string testValue = "Test";
         string? emittedOutput = null;
 
-        var pipelineNode = new Mock<PipelineNode<string>>().Object;
+        var pipelineNode = new TestablePipelineNode<string>();
         pipelineNode.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipelineNode.Input = testValue;
@@ -48,7 +48,7 @@ public sealed class PipelineNodeTests
         const string testValue = "Test";
         string? emittedOutput = null;
 
-        var pipelineNode = new Mock<PipelineNode<string>>().Object;
+        var pipelineNode = new TestablePipelineNode<string>();
         pipelineNode.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipelineNode.PassThrough = true;
