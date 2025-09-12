@@ -18,7 +18,57 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
     }
 
     /// <inheritdoc />
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, IEnumerable<IPipelineNode<TState>> nodes)
+        : base(nodes)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
+    public ServiceProviderPipeline(
+        IServiceProvider serviceProvider,
+        TState defaultState,
+        IEnumerable<IPipelineNode<TState>> nodes,
+        Action<TState> outputHandlerAction)
+        : base(defaultState, nodes, outputHandlerAction)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, params IPipelineNode<TState>[] nodes)
+        : base(nodes)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, TState defaultState, params IPipelineNode<TState>[] nodes)
+        : base(defaultState, nodes)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, ILogger<Pipeline<TState>>? logger) : base(logger)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>>? logger)
+        : base(nodes, logger)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    /// <inheritdoc />
+    public ServiceProviderPipeline(
+        IServiceProvider serviceProvider,
+        TState defaultState,
+        IEnumerable<IPipelineNode<TState>> nodes,
+        Action<TState> outputHandlerAction, ILogger<Pipeline<TState>>? logger)
+        : base(defaultState, nodes, outputHandlerAction, logger)
     {
         _serviceProvider = serviceProvider;
     }
