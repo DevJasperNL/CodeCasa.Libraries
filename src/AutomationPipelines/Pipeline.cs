@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace AutomationPipelines;
 
@@ -14,18 +13,15 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     private bool _callActionDistinct = true;
     private Action<TState>? _action;
     private IDisposable? _subscription;
-    private readonly IServiceProvider _serviceProvider;
 
     /// <inheritdoc />
-    public Pipeline(IServiceProvider serviceProvider)
+    public Pipeline()
     {
-        _serviceProvider = serviceProvider;
     }
 
     /// <inheritdoc />
-    public Pipeline(IServiceProvider serviceProvider, ILogger<Pipeline<TState>>? logger)
+    public Pipeline(ILogger<Pipeline<TState>>? logger)
     {
-        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -36,10 +32,12 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
         return this;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Registers a new node in the pipeline. The node will be created using the type's parameterless constructor.
+    /// </summary>
     public IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>
     {
-        return RegisterNode(ActivatorUtilities.CreateInstance<TNode>(_serviceProvider));
+        return RegisterNode((TNode)Activator.CreateInstance(typeof(TNode))!);
     }
 
     /// <inheritdoc />

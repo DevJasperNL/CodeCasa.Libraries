@@ -11,7 +11,7 @@ public interface IPipeline<TState> : IPipelineNode<TState>
     IPipeline<TState> SetDefault(TState state);
 
     /// <summary>
-    /// Registers a new node in the pipeline. The node will be created using the service provider.
+    /// Registers a new node in the pipeline.
     /// </summary>
     IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>;
 

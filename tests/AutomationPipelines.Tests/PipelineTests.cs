@@ -5,8 +5,6 @@ namespace AutomationPipelines.Tests;
 [TestClass]
 public sealed class PipelineTests
 {
-    private readonly IServiceProvider _serviceProvider = new Mock<IServiceProvider>().Object;
-
     [TestMethod]
     public void DefaultValue()
     {
@@ -15,7 +13,7 @@ public sealed class PipelineTests
 
         string? emittedOutput = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         // Act
@@ -34,8 +32,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var serviceProvider = new Mock<IServiceProvider>().Object;
-        var pipeline = new Pipeline<string>(serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetDefault(defaultValue);
@@ -57,8 +54,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var serviceProvider = new Mock<IServiceProvider>().Object;
-        var pipeline = new Pipeline<string>(serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -80,7 +76,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetDefault(defaultValue);
@@ -105,7 +101,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -135,7 +131,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -167,7 +163,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         List<string> outputHandlerResults = new();
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetOutputHandler(outputHandlerResults.Add, callActionDistinct: true);
@@ -191,7 +187,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         List<string> outputHandlerResults = new();
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetOutputHandler(outputHandlerResults.Add, callActionDistinct: false);
@@ -215,7 +211,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -248,7 +244,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
             
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
