@@ -13,7 +13,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAutomationPipelines(this IServiceCollection serviceCollection)
     {
         return serviceCollection
-            .AddTransient(typeof(IPipeline<>), typeof(Pipeline<>))
-            .AddTransient(typeof(Pipeline<>), typeof(Pipeline<>));
+            .AddTransient(typeof(IPipeline<>), typeof(ServiceProviderPipeline<>))
+            .AddTransient(typeof(Pipeline<>), typeof(ServiceProviderPipeline<>))
+            .AddTransient(typeof(ServiceProviderPipeline<>), typeof(ServiceProviderPipeline<>));
     }
 }

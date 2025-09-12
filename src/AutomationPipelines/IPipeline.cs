@@ -11,14 +11,14 @@ public interface IPipeline<TState> : IPipelineNode<TState>
     IPipeline<TState> SetDefault(TState state);
 
     /// <summary>
-    /// Registers a new node in the pipeline. The node will be created using the service provider.
+    /// Registers a new node in the pipeline.
     /// </summary>
     IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>;
 
     /// <summary>
     /// Registers a new node in the pipeline. The node is passed as a parameter.
     /// </summary>
-    IPipeline<TState> RegisterNode<TNode>(TNode node) where TNode : IPipelineNode<TState>;
+    IPipeline<TState> RegisterNode(IPipelineNode<TState> node);
 
     /// <summary>
     /// Sets the output handler for the pipeline. This handler will be called whenever a new output is produced by the pipeline.

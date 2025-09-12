@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
 
 namespace AutomationPipelines;
 
@@ -9,24 +9,92 @@ namespace AutomationPipelines;
 public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
 {
     private readonly List<IPipelineNode<TState>> _nodes = new();
-    private ILogger<Pipeline<TState>>? _logger;
+    private readonly ILogger<Pipeline<TState>>? _logger;
 
     private bool _callActionDistinct = true;
     private Action<TState>? _action;
     private IDisposable? _subscription;
-    private readonly IServiceProvider _serviceProvider;
 
-    /// <inheritdoc />
-    public Pipeline(IServiceProvider serviceProvider)
+    /// <summary>
+    /// Initializes a new, empty pipeline with no nodes.
+    /// </summary>
+    public Pipeline()
     {
-        _serviceProvider = serviceProvider;
     }
 
-    /// <inheritdoc />
-    public Pipeline(IServiceProvider serviceProvider, ILogger<Pipeline<TState>>? logger)
+    /// <summary>
+    /// Initializes a new pipeline with the specified nodes.
+    /// </summary>
+    public Pipeline(IEnumerable<IPipelineNode<TState>> nodes)
+        : this(nodes, null)
     {
-        _serviceProvider = serviceProvider;
+    }
+
+    /// <summary>
+    /// Initializes a new pipeline with the specified default state, nodes, and output handler.
+    /// </summary>
+    public Pipeline(TState defaultState, IEnumerable<IPipelineNode<TState>> nodes, Action<TState> outputHandlerAction)
+        : this(defaultState, nodes, outputHandlerAction, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new pipeline with the specified nodes.
+    /// </summary>
+    public Pipeline(params IPipelineNode<TState>[] nodes)
+    {
+        foreach (var node in nodes)
+        {
+            RegisterNode(node);
+        }
+    }
+
+    /// <summary>
+    /// Initializes a new pipeline with the specified default state and nodes.
+    /// </summary>
+    public Pipeline(TState defaultState, params IPipelineNode<TState>[] nodes)
+    {
+        foreach (var node in nodes)
+        {
+            RegisterNode(node);
+        }
+
+        SetDefault(defaultState);
+    }
+    
+    /// <summary>
+    /// Initializes a new, empty pipeline with an optional logger.
+    /// </summary>
+    public Pipeline(ILogger<Pipeline<TState>>? logger)
+    {
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Initializes a new pipeline with the specified nodes and an optional logger.
+    /// </summary>
+    public Pipeline(IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>>? logger)
+    {
+        _logger = logger;
+        foreach (var node in nodes)
+        {
+            RegisterNode(node);
+        }
+    }
+
+    /// <summary>
+    /// Initializes a new pipeline with the specified default state, nodes, output handler, and an optional logger.
+    /// </summary>
+    public Pipeline(TState defaultState, IEnumerable<IPipelineNode<TState>> nodes, Action<TState> outputHandlerAction, ILogger<Pipeline<TState>>? logger)
+    {
+        _logger = logger;
+        foreach (var node in nodes)
+        {
+            RegisterNode(node);
+        }
+
+        SetDefault(defaultState);
+        SetOutputHandler(outputHandlerAction);
     }
 
     /// <inheritdoc />
@@ -36,14 +104,16 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
         return this;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Registers a new node in the pipeline. The node will be created using the type's parameterless constructor.
+    /// </summary>
     public IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>
     {
-        return RegisterNode(ActivatorUtilities.CreateInstance<TNode>(_serviceProvider));
+        return RegisterNode((TNode)Activator.CreateInstance(typeof(TNode))!);
     }
 
     /// <inheritdoc />
-    public IPipeline<TState> RegisterNode<TNode>(TNode node) where TNode : IPipelineNode<TState>
+    public IPipeline<TState> RegisterNode(IPipelineNode<TState> node)
     {
         _subscription?.Dispose(); // Dispose old subscription if any.
         _subscription = node.OnNewOutput.Subscribe(SetOutputAndCallActionWhenApplicable);
