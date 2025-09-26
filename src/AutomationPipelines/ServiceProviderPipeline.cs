@@ -9,19 +9,23 @@ namespace AutomationPipelines;
 /// </summary>
 public class ServiceProviderPipeline<TState> : Pipeline<TState>
 {
+    private readonly IServiceScope _serviceScope;
     private readonly IServiceProvider _serviceProvider;
+    private bool _isDisposed;
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, IEnumerable<IPipelineNode<TState>> nodes)
         : base(nodes)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
@@ -32,34 +36,39 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
         Action<TState> outputHandlerAction)
         : base(defaultState, nodes, outputHandlerAction)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, params IPipelineNode<TState>[] nodes)
         : base(nodes)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, TState defaultState, params IPipelineNode<TState>[] nodes)
         : base(defaultState, nodes)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, ILogger<Pipeline<TState>>? logger) : base(logger)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
     public ServiceProviderPipeline(IServiceProvider serviceProvider, IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>>? logger)
         : base(nodes, logger)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
@@ -70,7 +79,8 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
         Action<TState> outputHandlerAction, ILogger<Pipeline<TState>>? logger)
         : base(defaultState, nodes, outputHandlerAction, logger)
     {
-        _serviceProvider = serviceProvider;
+        _serviceScope = serviceProvider.CreateScope();
+        _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <summary>
@@ -79,5 +89,23 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
     public override IPipeline<TState> RegisterNode<TNode>()
     {
         return RegisterNode(ActivatorUtilities.CreateInstance<TNode>(_serviceProvider));
+    }
+
+    /// <inheritdoc />
+    public override async ValueTask DisposeAsync()
+    {
+        if (_isDisposed) return;
+        _isDisposed = true;
+
+        await base.DisposeAsync();
+
+        if (_serviceScope is IAsyncDisposable asyncScope)
+        {
+            await asyncScope.DisposeAsync().ConfigureAwait(false);
+        }
+        else
+        {
+            _serviceScope.Dispose();
+        }
     }
 }
