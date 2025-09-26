@@ -76,7 +76,7 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
     /// <summary>
     /// Registers a new node in the pipeline. The node will be created using the service provider.
     /// </summary>
-    public new IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>
+    public override IPipeline<TState> RegisterNode<TNode>()
     {
         return RegisterNode(ActivatorUtilities.CreateInstance<TNode>(_serviceProvider));
     }

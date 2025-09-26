@@ -107,7 +107,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// <summary>
     /// Registers a new node in the pipeline. The node will be created using the type's parameterless constructor.
     /// </summary>
-    public IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>
+    public virtual IPipeline<TState> RegisterNode<TNode>() where TNode : IPipelineNode<TState>
     {
         return RegisterNode((TNode)Activator.CreateInstance(typeof(TNode))!);
     }
