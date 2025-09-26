@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a pipeline of nodes.
 /// </summary>
-public interface IPipeline<TState> : IPipelineNode<TState>
+public interface IPipeline<TState> : IPipelineNode<TState>, IAsyncDisposable
 {
     /// <summary>
     /// Sets the default state for the pipeline. This state will be used as the initial input for the first node in the pipeline.

@@ -1,6 +1,4 @@
-﻿using Moq;
-
-namespace AutomationPipelines.Tests;
+﻿namespace AutomationPipelines.Tests;
 
 [TestClass]
 public sealed class PipelineTests

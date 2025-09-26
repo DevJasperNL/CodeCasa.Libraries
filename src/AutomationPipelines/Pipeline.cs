@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Xml.Linq;
 
 namespace AutomationPipelines;
 
@@ -14,6 +13,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     private bool _callActionDistinct = true;
     private Action<TState>? _action;
     private IDisposable? _subscription;
+    private bool _isDisposed;
 
     /// <summary>
     /// Initializes a new, empty pipeline with no nodes.
@@ -199,5 +199,39 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
         // Note that _action will be called AFTER OnNewOutput.
         _action?.Invoke(output);
         _logger?.LogTrace($"Action executed with value {output}.");
+    }
+
+    /// <inheritdoc />
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (_isDisposed) return;
+        _isDisposed = true;
+
+        foreach (var node in _nodes)
+        {
+            switch (node)
+            {
+                case IAsyncDisposable asyncDisposable:
+                    try
+                    {
+                        await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, $"Exception when trying to dispose {node}.");
+                    }
+                    break;
+                case IDisposable disposable:
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, $"Exception when trying to dispose {node}.");
+                    }
+                    break;
+            }
+        }
     }
 }
