@@ -9,6 +9,12 @@ namespace AutomationPipelines.Tests
             set => base.Output = value;
         }
 
+        public new bool PassThrough
+        {
+            get => base.PassThrough;
+            set => base.PassThrough = value;
+        }
+
         public new void ChangeOutputAndTurnOnPassThroughOnNextInput(TState? output)
         {
             base.ChangeOutputAndTurnOnPassThroughOnNextInput(output);

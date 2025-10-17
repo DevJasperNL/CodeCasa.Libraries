@@ -1,12 +1,8 @@
-﻿using Moq;
-
-namespace AutomationPipelines.Tests;
+﻿namespace AutomationPipelines.Tests;
 
 [TestClass]
 public sealed class PipelineTests
 {
-    private readonly IServiceProvider _serviceProvider = new Mock<IServiceProvider>().Object;
-
     [TestMethod]
     public void DefaultValue()
     {
@@ -15,7 +11,7 @@ public sealed class PipelineTests
 
         string? emittedOutput = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         // Act
@@ -34,8 +30,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var serviceProvider = new Mock<IServiceProvider>().Object;
-        var pipeline = new Pipeline<string>(serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetDefault(defaultValue);
@@ -57,8 +52,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var serviceProvider = new Mock<IServiceProvider>().Object;
-        var pipeline = new Pipeline<string>(serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -80,11 +74,14 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetDefault(defaultValue);
-        pipeline.RegisterNode(new OutputNode(nodeValue));
+        pipeline.RegisterNode(new TestablePipelineNode<string>
+        {
+            Output = nodeValue
+        });
 
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -102,7 +99,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
@@ -112,7 +109,10 @@ public sealed class PipelineTests
         Assert.AreEqual(defaultValue, outputHandlerResult);
         Assert.AreEqual(defaultValue, pipeline.Output);
 
-        pipeline.RegisterNode(new OutputNode(nodeValue));
+        pipeline.RegisterNode(new TestablePipelineNode<string>
+        {
+            Output = nodeValue
+        });
 
         Assert.AreEqual(nodeValue, emittedOutput);
         Assert.AreEqual(nodeValue, outputHandlerResult);
@@ -129,11 +129,14 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
-        var node = new OutputNode(nodeValue1);
+        var node = new TestablePipelineNode<string>
+        {
+            Output = nodeValue1
+        };
 
         pipeline.SetDefault(defaultValue);
         pipeline.RegisterNode(node);
@@ -142,7 +145,7 @@ public sealed class PipelineTests
         Assert.AreEqual(nodeValue1, outputHandlerResult);
         Assert.AreEqual(nodeValue1, pipeline.Output);
 
-        node.ChangeOutput(nodeValue2);
+        node.Output = nodeValue2;
 
         Assert.AreEqual(nodeValue2, emittedOutput);
         Assert.AreEqual(nodeValue2, outputHandlerResult);
@@ -158,7 +161,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         List<string> outputHandlerResults = new();
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetOutputHandler(outputHandlerResults.Add, callActionDistinct: true);
@@ -182,7 +185,7 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         List<string> outputHandlerResults = new();
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
 
         pipeline.SetOutputHandler(outputHandlerResults.Add, callActionDistinct: false);
@@ -206,11 +209,14 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
 
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
-        var node1 = new OutputNode(nodeValue);
+        var node1 = new TestablePipelineNode<string>
+        {
+            Output = nodeValue
+        };
 
         pipeline.SetDefault(defaultValue);
         pipeline.RegisterNode(node1);
@@ -236,12 +242,18 @@ public sealed class PipelineTests
         string? emittedOutput = null;
         string? outputHandlerResult = null;
             
-        var pipeline = new Pipeline<string>(_serviceProvider);
+        var pipeline = new Pipeline<string>();
         pipeline.OnNewOutput.Subscribe(o => emittedOutput = o);
         pipeline.SetOutputHandler(s => outputHandlerResult = s);
 
-        var node1 = new OutputNode(firstNodeValue);
-        var node2 = new OutputNode(secondNodeValue);
+        var node1 = new TestablePipelineNode<string>
+        {
+            Output = firstNodeValue
+        };
+        var node2 = new TestablePipelineNode<string>
+        {
+            Output = secondNodeValue
+        };
 
         pipeline.SetDefault(defaultValue);
         pipeline.RegisterNode(node1);
@@ -256,18 +268,5 @@ public sealed class PipelineTests
         Assert.AreEqual(firstNodeValue, emittedOutput);
         Assert.AreEqual(firstNodeValue, outputHandlerResult);
         Assert.AreEqual(firstNodeValue, pipeline.Output);
-    }
-
-    private class OutputNode : PipelineNode<string>
-    {
-        public OutputNode(string output)
-        {
-            Output = output;
-        }
-
-        public void ChangeOutput(string? newOutput)
-        {
-            Output = newOutput;
-        }
     }
 }
