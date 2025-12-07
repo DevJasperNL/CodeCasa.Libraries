@@ -57,15 +57,15 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
     }
 
     /// <inheritdoc />
-    public ServiceProviderPipeline(IServiceProvider serviceProvider, ILogger<Pipeline<TState>>? logger) : base(logger)
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, string? name, ILogger<Pipeline<TState>> logger) : base(name, logger)
     {
         _serviceScope = serviceProvider.CreateScope();
         _serviceProvider = _serviceScope.ServiceProvider;
     }
 
     /// <inheritdoc />
-    public ServiceProviderPipeline(IServiceProvider serviceProvider, IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>>? logger)
-        : base(nodes, logger)
+    public ServiceProviderPipeline(IServiceProvider serviceProvider, string? name, IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>> logger)
+        : base(name, nodes, logger)
     {
         _serviceScope = serviceProvider.CreateScope();
         _serviceProvider = _serviceScope.ServiceProvider;
@@ -74,10 +74,11 @@ public class ServiceProviderPipeline<TState> : Pipeline<TState>
     /// <inheritdoc />
     public ServiceProviderPipeline(
         IServiceProvider serviceProvider,
+        string? name,
         TState defaultState,
         IEnumerable<IPipelineNode<TState>> nodes,
-        Action<TState> outputHandlerAction, ILogger<Pipeline<TState>>? logger)
-        : base(defaultState, nodes, outputHandlerAction, logger)
+        Action<TState> outputHandlerAction, ILogger<Pipeline<TState>> logger)
+        : base(name, defaultState, nodes, outputHandlerAction, logger)
     {
         _serviceScope = serviceProvider.CreateScope();
         _serviceProvider = _serviceScope.ServiceProvider;
