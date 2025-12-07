@@ -26,7 +26,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// Initializes a new pipeline with the specified nodes.
     /// </summary>
     public Pipeline(IEnumerable<IPipelineNode<TState>> nodes)
-        : this(nodes, null)
+        : this(null, nodes, null!)
     {
     }
 
@@ -34,7 +34,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// Initializes a new pipeline with the specified default state, nodes, and output handler.
     /// </summary>
     public Pipeline(TState defaultState, IEnumerable<IPipelineNode<TState>> nodes, Action<TState> outputHandlerAction)
-        : this(defaultState, nodes, outputHandlerAction, null)
+        : this(null, defaultState, nodes, outputHandlerAction, null!)
     {
     }
 
@@ -63,18 +63,20 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     }
     
     /// <summary>
-    /// Initializes a new, empty pipeline with an optional logger.
+    /// Initializes a new, empty pipeline with an optional name and logger.
     /// </summary>
-    public Pipeline(ILogger<Pipeline<TState>>? logger)
+    public Pipeline(string? name, ILogger<Pipeline<TState>> logger)
     {
+        Name = name;
         _logger = logger;
     }
 
     /// <summary>
-    /// Initializes a new pipeline with the specified nodes and an optional logger.
+    /// Initializes a new pipeline with the specified nodes and an optional name and logger.
     /// </summary>
-    public Pipeline(IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>>? logger)
+    public Pipeline(string? name, IEnumerable<IPipelineNode<TState>> nodes, ILogger<Pipeline<TState>> logger)
     {
+        Name = name;
         _logger = logger;
         foreach (var node in nodes)
         {
@@ -83,10 +85,11 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     }
 
     /// <summary>
-    /// Initializes a new pipeline with the specified default state, nodes, output handler, and an optional logger.
+    /// Initializes a new pipeline with the specified default state, nodes, output handler, and an optional name and logger.
     /// </summary>
-    public Pipeline(TState defaultState, IEnumerable<IPipelineNode<TState>> nodes, Action<TState> outputHandlerAction, ILogger<Pipeline<TState>>? logger)
+    public Pipeline(string? name, TState defaultState, IEnumerable<IPipelineNode<TState>> nodes, Action<TState> outputHandlerAction, ILogger<Pipeline<TState>> logger)
     {
+        Name = name;
         _logger = logger;
         foreach (var node in nodes)
         {
@@ -96,6 +99,13 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
         SetDefault(defaultState);
         SetOutputHandler(outputHandlerAction);
     }
+
+    /// <summary>
+    /// Name of the pipeline (used for logging).
+    /// </summary>
+    public string? Name { get; set; }
+
+    private string LogPrefix => Name == null ? "" : $"{Name}: ";
 
     /// <inheritdoc />
     public IPipeline<TState> SetDefault(TState state)
@@ -115,31 +125,45 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// <inheritdoc />
     public IPipeline<TState> RegisterNode(IPipelineNode<TState> node)
     {
-        _subscription?.Dispose(); // Dispose old subscription if any.
-        _subscription = node.OnNewOutput.Subscribe(SetOutputAndCallActionWhenApplicable);
+        _logger?.LogTrace($"{LogPrefix}Registering [Node {_nodes.Count}] ({node}).");
 
+        _subscription?.Dispose(); // Dispose old subscription if any.
+        
         if (_nodes.Any())
         {
             var previousNode = _nodes.Last();
+            var sourceIndex = _nodes.Count - 1;
+            var destinationIndex = _nodes.Count;
             previousNode.OnNewOutput.Subscribe(output =>
             {
+                _logger?.LogTrace($"{LogPrefix}[Node {sourceIndex}] ({previousNode}) passed value [{output?.ToString() ?? "NULL"}] to [Node {destinationIndex}] ({node}).");
                 node.Input = output;
-                _logger?.LogTrace($"Node {previousNode} passed value {output} to node {node}.");
             });
 
+            _logger?.LogTrace($"{LogPrefix}Passing [Node {sourceIndex}] ({previousNode}) value [{previousNode.Output?.ToString() ?? "NULL"}] to [Node {destinationIndex}] ({node}).");
             node.Input = previousNode.Output;
         }
-
-        _nodes.Add(node);
-
-        _logger?.LogDebug($"Node {node} registered.");
-
-        if (_nodes.Count == 1)
+        else
         {
             node.Input = Input;
         }
+        _nodes.Add(node);
 
-        SetOutputAndCallActionWhenApplicable(node.Output);
+        /*
+         * We register to the output of the node AFTER we passed the input of the previous node to it.
+         * If the new node sets its output in the same thread as the input is set, we don't set the pipeline output twice (once in this subscription and once at the end of the method).
+         * As we don't know the behaviour of the node, there is no guarantee that this event is fired when the input is set, for this reason we set the pipeline output to the node's output manually at the end of this method.
+         */
+        var nodeIndex = _nodes.Count - 1;
+        _subscription = node.OnNewOutput.Subscribe(o =>
+        {
+            _logger?.LogTrace($"{LogPrefix}[Node {nodeIndex}] ({node}) passed value [{o?.ToString() ?? "NULL"}] to pipeline output.");
+            SetOutputAndCallActionWhenApplicable(o);
+        });
+
+        var newOutput = node.Output;
+        _logger?.LogTrace($"{LogPrefix}[Node {_nodes.Count - 1}] ({node}) registered and passed value [{newOutput?.ToString() ?? "NULL"}] to pipeline output.");
+        SetOutputAndCallActionWhenApplicable(newOutput);
 
         return this;
     }
@@ -147,15 +171,20 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// <inheritdoc />
     public IPipeline<TState> SetOutputHandler(Action<TState> action, bool callActionDistinct = true)
     {
-        _logger?.LogDebug(callActionDistinct
-            ? "Setting output handler."
-            : "Setting output handler. Action calls with duplicate values are allowed.");
+        _logger?.LogTrace(callActionDistinct
+            ? $"{LogPrefix}Setting output handler."
+            : $"{LogPrefix}Setting output handler. Action calls with duplicate values are allowed.");
 
         _callActionDistinct = callActionDistinct;
         _action = action;
         if (Output != null)
         {
             _action(Output);
+            _logger?.LogDebug($"{LogPrefix}Action executed with current output [{Output?.ToString() ?? "NULL"}].");
+        }
+        else
+        {
+            _logger?.LogTrace($"{LogPrefix}No output value to execute.");
         }
 
         return this;
@@ -164,16 +193,15 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
     /// <inheritdoc />
     protected override void InputReceived(TState? state)
     {
-        _logger?.LogDebug($"Input set to {state}.");
         if (!_nodes.Any())
         {
-            _logger?.LogTrace($"No nodes, calling action immediately with {state}.");
+            _logger?.LogTrace($"{LogPrefix}Input set to [{state?.ToString() ?? "NULL"}]. No nodes registered, passing to pipeline output immediately.");
             SetOutputAndCallActionWhenApplicable(Input);
             return;
         }
 
         var firstNode = _nodes.First();
-        _logger?.LogTrace($"Passing input {state} to first node {firstNode}.");
+        _logger?.LogTrace($"{LogPrefix}Input set to [{state?.ToString() ?? "NULL"}]. Passing input to first [Node 0] ({firstNode}).");
         firstNode.Input = Input;
     }
 
@@ -182,23 +210,26 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
         var outputChanged = !EqualityComparer<TState>.Default.Equals(Output, output);
 
         Output = output;
-        _logger?.LogDebug($"Pipeline output set to {output}.");
-
+        if (_action == null)
+        {
+            _logger?.LogTrace($"{LogPrefix}No action set to execute.");
+            return;
+        }
         if (output == null)
         {
-            _logger?.LogTrace("No action set to execute.");
+            _logger?.LogTrace($"{LogPrefix}No output value to execute.");
             return;
         }
 
         if (_callActionDistinct && !outputChanged)
         {
-            _logger?.LogTrace("No action executed as output has not changed.");
+            _logger?.LogTrace($"{LogPrefix}No action executed as output has not changed.");
             return;
         }
 
         // Note that _action will be called AFTER OnNewOutput.
-        _action?.Invoke(output);
-        _logger?.LogTrace($"Action executed with value {output}.");
+        _action.Invoke(output);
+        _logger?.LogDebug($"{LogPrefix}Action executed with output [{Output?.ToString() ?? "NULL"}].");
     }
 
     /// <inheritdoc />
@@ -218,7 +249,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogError(ex, $"Exception when trying to dispose {node}.");
+                        _logger?.LogError(ex, $"{LogPrefix}Exception when trying to dispose {node}.");
                     }
                     break;
                 case IDisposable disposable:
@@ -228,7 +259,7 @@ public class Pipeline<TState> : PipelineNode<TState>, IPipeline<TState>
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogError(ex, $"Exception when trying to dispose {node}.");
+                        _logger?.LogError(ex, $"{LogPrefix}Exception when trying to dispose {node}.");
                     }
                     break;
             }

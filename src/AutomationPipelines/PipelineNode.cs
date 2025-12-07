@@ -117,4 +117,7 @@ public abstract class PipelineNode<TState> : IPipelineNode<TState>
         _output = output;
         _newOutputSubject.OnNext(output);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => GetType().Name;
 }
