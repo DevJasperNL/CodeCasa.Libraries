@@ -4,7 +4,7 @@
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Title>AutomationPipelines</Title>
+    <Title>CodeCasa.AutomationPipelines</Title>
     <Authors>Jasper Lammers</Authors>
     <Company>DevJasper</Company>
     <Description>Composable, reactive, and layered logic pipelines for automation.</Description>
@@ -12,7 +12,7 @@
     <PackageTags>Home Automation;Home Assistant;HA Integration;Smart Home;Automation;Reactive Programming;Rx;Rx.NET;Reactive Extensions;Reactive;ReactiveX;Reactive Streams;Reactive Patterns;Reactive Utils;Observables;Pipeline;Pipelines;Node;Nodes;C#;.NET;DotNet;Extension Methods</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageId>AutomationPipelines</PackageId>
+    <PackageId>CodeCasa.AutomationPipelines</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageReleaseNotes>https://github.com/DevJasperNL/CodeCasa.Libraries/releases</PackageReleaseNotes>
   </PropertyGroup>
@@ -26,6 +26,10 @@
 	  <Pack>True</Pack>
 	  <PackagePath>\</PackagePath>
 	</None>
+	<None Include="..\..\img\cc_icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
