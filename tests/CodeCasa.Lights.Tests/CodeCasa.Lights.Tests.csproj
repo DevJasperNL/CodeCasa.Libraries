@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="4.0.2" />
+    <PackageReference Include="MSTest" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AutomationPipelines\AutomationPipelines.csproj" />
+    <ProjectReference Include="..\..\src\CodeCasa.Lights\CodeCasa.Lights.csproj" />
   </ItemGroup>
 
   <ItemGroup>

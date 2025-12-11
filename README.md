@@ -6,7 +6,7 @@
 
 A collection of .NET libraries focused on smart home automation and general-purpose utilities.
 
-## AutomationPipelines
+## CodeCasa.AutomationPipelines
 
 Composable, reactive, and layered logic pipelines for automation.
 

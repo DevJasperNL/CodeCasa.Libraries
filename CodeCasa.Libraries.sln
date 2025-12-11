@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11222.15 d18.0
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationPipelines", "src\AutomationPipelines\AutomationPipelines.csproj", "{D0F0C414-2BC1-4DAC-BC0A-E48FE0FD4323}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCasa.AutomationPipelines", "src\CodeCasa.AutomationPipelines\CodeCasa.AutomationPipelines.csproj", "{D0F0C414-2BC1-4DAC-BC0A-E48FE0FD4323}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9E5A9B72-8828-45B2-AA54-8AFEBFCB901C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationPipelines.Tests", "tests\AutomationPipelines.Tests\AutomationPipelines.Tests.csproj", "{FDB7D4BC-69D7-442B-BB27-01C91645D55D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCasa.AutomationPipelines.Tests", "tests\CodeCasa.AutomationPipelines.Tests\CodeCasa.AutomationPipelines.Tests.csproj", "{FDB7D4BC-69D7-442B-BB27-01C91645D55D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCasa.Lights", "src\CodeCasa.Lights\CodeCasa.Lights.csproj", "{89F2BFC1-CF20-4198-A0A3-024F42BEC485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCasa.Lights.Tests", "tests\CodeCasa.Lights.Tests\CodeCasa.Lights.Tests.csproj", "{3B732670-85B6-41E2-B333-B6C2108EF45C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,11 +27,20 @@ Global
 		{FDB7D4BC-69D7-442B-BB27-01C91645D55D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDB7D4BC-69D7-442B-BB27-01C91645D55D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDB7D4BC-69D7-442B-BB27-01C91645D55D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F2BFC1-CF20-4198-A0A3-024F42BEC485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F2BFC1-CF20-4198-A0A3-024F42BEC485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F2BFC1-CF20-4198-A0A3-024F42BEC485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F2BFC1-CF20-4198-A0A3-024F42BEC485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B732670-85B6-41E2-B333-B6C2108EF45C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B732670-85B6-41E2-B333-B6C2108EF45C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B732670-85B6-41E2-B333-B6C2108EF45C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B732670-85B6-41E2-B333-B6C2108EF45C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FDB7D4BC-69D7-442B-BB27-01C91645D55D} = {9E5A9B72-8828-45B2-AA54-8AFEBFCB901C}
+		{3B732670-85B6-41E2-B333-B6C2108EF45C} = {9E5A9B72-8828-45B2-AA54-8AFEBFCB901C}
 	EndGlobalSection
 EndGlobal
