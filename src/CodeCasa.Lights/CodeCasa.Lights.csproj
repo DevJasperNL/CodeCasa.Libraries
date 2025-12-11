@@ -16,7 +16,6 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageIcon>cc_icon.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/DevJasperNL/CodeCasa.Libraries/releases</PackageReleaseNotes>
-	<Version>1.5.0</Version>
   </PropertyGroup>
   
   <ItemGroup>
