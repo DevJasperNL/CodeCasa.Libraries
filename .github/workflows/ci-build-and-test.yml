@@ -29,4 +29,5 @@ jobs:
       - name: 🧪 Run tests
         run: |
           echo "## 📊 Unit test results" >> $GITHUB_STEP_SUMMARY
-          dotnet test --no-build --configuration Release tests/AutomationPipelines.Tests/AutomationPipelines.Tests.csproj
+          dotnet test --no-build --configuration Release tests/CodeCasa.AutomationPipelines.Tests/CodeCasa.AutomationPipelines.Tests.csproj
+          dotnet test --no-build --configuration Release tests/CodeCasa.Lights.Tests/CodeCasa.Lights.Tests.csproj
