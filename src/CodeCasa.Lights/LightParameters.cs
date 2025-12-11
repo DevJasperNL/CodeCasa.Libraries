@@ -44,6 +44,10 @@ public partial record LightParameters
         return new LightParameters { Brightness = byte.MaxValue };
     }
 
+    /// <summary>
+    /// Converts this <see cref="LightParameters"/> to a <see cref="LightTransition"/> with no transition time.
+    /// </summary>
+    /// <returns>A <see cref="LightTransition"/> representing an instant transition to these parameters.</returns>
     public LightTransition AsTransition()
     {
         return new LightTransition
@@ -52,6 +56,11 @@ public partial record LightParameters
         };
     }
 
+    /// <summary>
+    /// Converts this <see cref="LightParameters"/> to a <see cref="LightTransition"/> with the specified transition time.
+    /// </summary>
+    /// <param name="transitionTime">The duration of the transition.</param>
+    /// <returns>A <see cref="LightTransition"/> with the specified transition time.</returns>
     public LightTransition AsTransition(TimeSpan transitionTime)
     {
         return new LightTransition
@@ -61,6 +70,11 @@ public partial record LightParameters
         };
     }
 
+    /// <summary>
+    /// Converts this <see cref="LightParameters"/> to a <see cref="LightTransition"/> with the specified transition time in seconds.
+    /// </summary>
+    /// <param name="transitionTimeInSeconds">The duration of the transition in seconds.</param>
+    /// <returns>A <see cref="LightTransition"/> with the specified transition time.</returns>
     public LightTransition AsTransitionInSeconds(int transitionTimeInSeconds)
     {
         return new LightTransition

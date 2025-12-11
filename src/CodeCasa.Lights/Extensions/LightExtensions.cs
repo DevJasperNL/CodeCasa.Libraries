@@ -1,8 +1,19 @@
-﻿
-namespace CodeCasa.Lights.Extensions;
+﻿namespace CodeCasa.Lights.Extensions;
 
+/// <summary>
+/// Provides extension methods for <see cref="ILight"/> instances.
+/// </summary>
 public static class LightExtensions
 {
+    /// <summary>
+    /// Flattens a light hierarchy into a single-dimensional array of leaf lights.
+    /// </summary>
+    /// <remarks>
+    /// This method recursively traverses the light hierarchy and collects all leaf lights
+    /// (lights without children). Circular references are handled by tracking visited lights.
+    /// </remarks>
+    /// <param name="light">The light to flatten.</param>
+    /// <returns>An array of leaf lights from the light hierarchy.</returns>
     public static ILight[] Flatten(this ILight light)
     {
         var visitedLights = new HashSet<ILight>();
