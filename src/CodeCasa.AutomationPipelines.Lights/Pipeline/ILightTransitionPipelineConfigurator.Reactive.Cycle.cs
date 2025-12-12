@@ -1,33 +1,10 @@
 ﻿using CodeCasa.AutomationPipelines.Lights.Cycle;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial interface ILightTransitionPipelineConfigurator
 {
-    /// <summary>
-    /// Adds a cycle node that rotates through the specified light scenes when triggered by <paramref name="triggerObservable"/>.
-    /// Each trigger cycles to the next scene in the collection.
-    /// </summary>
-    /// <typeparam name="T">The type of values emitted by the trigger observable.</typeparam>
-    /// <param name="triggerObservable">The observable that triggers cycling to the next scene.</param>
-    /// <param name="scenes">The collection of light scene templates to cycle through.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator AddCycle<T>(IObservable<T> triggerObservable,
-        IEnumerable<LightSceneTemplate> scenes);
-
-    /// <summary>
-    /// Adds a cycle node that rotates through the specified light scenes when triggered by <paramref name="triggerObservable"/>.
-    /// Each trigger cycles to the next scene in the array.
-    /// </summary>
-    /// <typeparam name="T">The type of values emitted by the trigger observable.</typeparam>
-    /// <param name="triggerObservable">The observable that triggers cycling to the next scene.</param>
-    /// <param name="scenes">The array of light scene templates to cycle through.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator AddCycle<T>(IObservable<T> triggerObservable,
-        params LightSceneTemplate[] scenes);
-
     /// <summary>
     /// Adds a cycle node that rotates through the specified light parameters when triggered by <paramref name="triggerObservable"/>.
     /// Each trigger cycles to the next set of parameters in the collection.

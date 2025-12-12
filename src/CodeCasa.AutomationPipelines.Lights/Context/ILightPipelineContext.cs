@@ -2,8 +2,8 @@
 
 namespace CodeCasa.AutomationPipelines.Lights.Context;
 
-public interface ILightPipelineContext<out TLight> where TLight : ILight
+public interface ILightPipelineContext
 {
     IServiceProvider ServiceProvider { get; }
-    TLight LightEntity { get; }
+    ILight LightEntity { get; }
 }

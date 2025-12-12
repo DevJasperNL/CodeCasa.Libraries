@@ -5,41 +5,13 @@ using CodeCasa.AutomationPipelines.Lights.Nodes;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using CodeCasa.Lights;
 using Microsoft.Extensions.DependencyInjection;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Extensions;
-using NetDaemon.Lights.Scenes;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial class LightTransitionPipelineConfigurator
 {
-    public ILightTransitionPipelineConfigurator When<TObservable>(LightSceneTemplate lightSceneTemplate)
-        where TObservable : IObservable<bool>
-    {
-        return When<TObservable>(lightSceneTemplate(LightEntity));
-    }
-
-    public ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        LightSceneTemplate lightSceneTemplate)
-    {
-        return When(observable, lightSceneTemplate(LightEntity));
-    }
-
-    public ILightTransitionPipelineConfigurator When<TObservable>(
-        Func<LightSceneTemplate> lightSceneTemplateFactory) where TObservable : IObservable<bool>
-    {
-        return When<TObservable>(
-            new Func<ILightPipelineContext, LightParameters>(_ => lightSceneTemplateFactory()(LightEntity)));
-    }
-
-    public ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        Func<LightSceneTemplate> lightSceneTemplateFactory)
-    {
-        return When(observable,
-            new Func<ILightPipelineContext, LightParameters>(_ => lightSceneTemplateFactory()(LightEntity)));
-    }
-
     public ILightTransitionPipelineConfigurator When<TObservable>(LightParameters lightParameters)
         where TObservable : IObservable<bool>
     {

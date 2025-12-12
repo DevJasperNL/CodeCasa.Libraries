@@ -6,41 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 using System.Reactive.Linq;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial class CompositeLightTransitionPipelineConfigurator
 {
-    public ILightTransitionPipelineConfigurator Switch<TObservable>(LightSceneTemplate trueLightSceneTemplate,
-        LightSceneTemplate falseLightSceneTemplate) where TObservable : IObservable<bool>
-    {
-        NodeContainers.Values.ForEach(b => b.Switch<TObservable>(trueLightSceneTemplate, falseLightSceneTemplate));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable, LightSceneTemplate trueLightSceneTemplate,
-        LightSceneTemplate falseLightSceneTemplate)
-    {
-        NodeContainers.Values.ForEach(b => b.Switch(observable, trueLightSceneTemplate, falseLightSceneTemplate));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator Switch<TObservable>(Func<LightSceneTemplate> trueLightSceneTemplateFactory,
-        Func<LightSceneTemplate> falseLightSceneTemplateFactory) where TObservable : IObservable<bool>
-    {
-        NodeContainers.Values.ForEach(b => b.Switch<TObservable>(trueLightSceneTemplateFactory, falseLightSceneTemplateFactory));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable, Func<LightSceneTemplate> trueLightSceneTemplateFactory,
-        Func<LightSceneTemplate> falseLightSceneTemplateFactory)
-    {
-        NodeContainers.Values.ForEach(b => b.Switch(observable, trueLightSceneTemplateFactory, falseLightSceneTemplateFactory));
-        return this;
-    }
-
     public ILightTransitionPipelineConfigurator Switch<TObservable>(LightParameters trueLightParameters,
         LightParameters falseLightParameters) where TObservable : IObservable<bool>
     {

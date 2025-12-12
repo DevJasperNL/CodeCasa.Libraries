@@ -2,12 +2,9 @@
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.Extensions;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
-
-
-using NetDaemon.HassModel.Entities;
 using System.Reactive.Concurrency;
-using NetDaemon.Devices.Abstractions;
-using NetDaemon.Lights;
+using CodeCasa.Abstractions;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline
 {
@@ -15,13 +12,13 @@ namespace CodeCasa.AutomationPipelines.Lights.Pipeline
         IServiceProvider serviceProvider,
         LightPipelineFactory lightPipelineFactory,
         ReactiveNodeFactory reactiveNodeFactory,
-        ILightEntityCore lightEntity,
+        ILight lightEntity,
         IScheduler scheduler)
         : ILightTransitionPipelineConfigurator
     {
         private readonly List<IPipelineNode<LightTransition>> _nodes = new();
 
-        internal ILightEntityCore LightEntity { get; } = lightEntity;
+        internal ILight LightEntity { get; } = lightEntity;
         internal string? Name { get; private set; }
 
         public IReadOnlyCollection<IPipelineNode<LightTransition>> Nodes => _nodes.AsReadOnly();
@@ -79,7 +76,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Pipeline
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) =>
             ForLights([lightEntityId], compositeNodeBuilder);
 
-        public ILightTransitionPipelineConfigurator ForLight(ILightEntityCore lightEntity,
+        public ILightTransitionPipelineConfigurator ForLight(ILight lightEntity,
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights([lightEntity], compositeNodeBuilder);
 
         public ILightTransitionPipelineConfigurator ForLights(IEnumerable<string> lightEntityIds,
@@ -89,7 +86,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Pipeline
             return this;
         }
 
-        public ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILightEntityCore> lightEntities,
+        public ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILight> lightEntities,
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights(lightEntities.Select(e => e.EntityId), compositeNodeBuilder);
 
         public ILightTransitionPipelineConfigurator AddPipeline(Action<ILightTransitionPipelineConfigurator> pipelineNodeOptions) => AddNode(lightPipelineFactory.CreateLightPipeline(LightEntity, pipelineNodeOptions));

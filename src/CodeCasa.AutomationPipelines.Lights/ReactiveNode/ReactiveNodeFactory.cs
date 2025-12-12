@@ -7,23 +7,20 @@ using AutomationPipelines;
 using CodeCasa.AutomationPipelines.Lights.Extensions;
 using CodeCasa.AutomationPipelines.Lights.Nodes;
 using CodeCasa.AutomationPipelines.Lights.Pipeline;
+using CodeCasa.Lights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using NetDaemon.HassModel;
-using NetDaemon.HassModel.Entities;
-using NetDaemon.Lights;
-
 namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode
 {
-    public class ReactiveNodeFactory(IServiceProvider serviceProvider, IHaContext haContext, IScheduler scheduler)
+    public class ReactiveNodeFactory(IServiceProvider serviceProvider, IScheduler scheduler)
     {
-        public IPipelineNode<LightTransition> CreateReactiveNode(ILightEntityCore lightEntity, Action<ILightTransitionReactiveNodeConfigurator> configure)
+        public IPipelineNode<LightTransition> CreateReactiveNode(ILight lightEntity, Action<ILightTransitionReactiveNodeConfigurator> configure)
         {
-            return CreateReactiveNodes([lightEntity], configure)[lightEntity.EntityId];
+            return CreateReactiveNodes([lightEntity], configure)[lightEntity.Id];
         }
 
-        public Dictionary<string, IPipelineNode<LightTransition>> CreateReactiveNodes(IEnumerable<ILightEntityCore> lightEntities, Action<ILightTransitionReactiveNodeConfigurator> configure)
+        public Dictionary<string, IPipelineNode<LightTransition>> CreateReactiveNodes(IEnumerable<ILight> lightEntities, Action<ILightTransitionReactiveNodeConfigurator> configure)
         {
             // todo: is this assumption correct? Make internal?
             // Note: we simply assume that these are not groups.
@@ -34,13 +31,12 @@ namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode
             }
 
             var lightPipelineFactory = serviceProvider.GetRequiredService<LightPipelineFactory>(); // todo
-            var reactiveConfigurators = lightEntityArray.ToDictionary(l => l.EntityId, l => new LightTransitionReactiveNodeConfigurator(serviceProvider, lightPipelineFactory,
+            var reactiveConfigurators = lightEntityArray.ToDictionary(l => l.Id, l => new LightTransitionReactiveNodeConfigurator(serviceProvider, lightPipelineFactory,
                 this, l, scheduler));
             ILightTransitionReactiveNodeConfigurator configurator = lightEntityArray.Length == 1
-                ? reactiveConfigurators[lightEntityArray[0].EntityId]
+                ? reactiveConfigurators[lightEntityArray[0].Id]
                 : new CompositeLightTransitionReactiveNodeConfigurator(
                     serviceProvider, 
-                    haContext,
                     lightPipelineFactory,
                     this,
                     reactiveConfigurators,
@@ -60,9 +56,9 @@ namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode
 
             if (!dimmers.Any())
             {
-                return lightEntityArray.ToDictionary(l => l.EntityId, l =>
+                return lightEntityArray.ToDictionary(l => l.Id, l =>
                 {
-                    var reactiveNode = CreateReactiveNode(reactiveConfigurators[l.EntityId]);
+                    var reactiveNode = CreateReactiveNode(reactiveConfigurators[l.Id]);
                     return (IPipelineNode<LightTransition>)reactiveNode;
                 });
             }
@@ -73,21 +69,21 @@ namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode
             
             foreach (var lightEntity in lightEntityArray)
             {
-                var reactiveNodeConfigurator = reactiveConfigurators[lightEntity.EntityId];
+                var reactiveNodeConfigurator = reactiveConfigurators[lightEntity.Id];
                 var reactiveNode = CreateReactiveNode(reactiveNodeConfigurator);
                 var lightDimmerOptions = reactiveNodeConfigurator.DimmerOptions;
                 
                 var dimmerNode = new ReactiveDimmerNode(
                     reactiveNode,
-                    lightEntity.EntityId,
+                    lightEntity.Id,
                     lightDimmerOptions.MinBrightness,
                     lightDimmerOptions.BrightnessStep,
                     scheduler);
 
-                dimmerNodes.Add(lightEntity.EntityId, dimmerNode);
+                dimmerNodes.Add(lightEntity.Id, dimmerNode);
                 var innerPipeline = new ReactiveDimmerPipeline(reactiveNode, dimmerNode, registrationManager);
 
-                result.Add(lightEntity.EntityId, innerPipeline);
+                result.Add(lightEntity.Id, innerPipeline);
             }
 
             /*

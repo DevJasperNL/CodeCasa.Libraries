@@ -5,43 +5,13 @@ using CodeCasa.AutomationPipelines.Lights.Nodes;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using CodeCasa.Lights;
 using Microsoft.Extensions.DependencyInjection;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Extensions;
-using NetDaemon.Lights.Scenes;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial class LightTransitionPipelineConfigurator
 {
-    public ILightTransitionPipelineConfigurator Switch<TObservable>(LightSceneTemplate trueLightSceneTemplate,
-        LightSceneTemplate falseLightSceneTemplate) where TObservable : IObservable<bool>
-    {
-        return Switch<TObservable>(trueLightSceneTemplate(LightEntity), falseLightSceneTemplate(LightEntity));
-    }
-
-    public ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable, LightSceneTemplate trueLightSceneTemplate,
-        LightSceneTemplate falseLightSceneTemplate)
-    {
-        return Switch(observable, trueLightSceneTemplate(LightEntity), falseLightSceneTemplate(LightEntity));
-    }
-
-    public ILightTransitionPipelineConfigurator Switch<TObservable>(Func<LightSceneTemplate> trueLightSceneTemplateFactory,
-        Func<LightSceneTemplate> falseLightSceneTemplateFactory) where TObservable : IObservable<bool>
-    {
-        return Switch<TObservable>(
-            new Func<ILightPipelineContext, LightParameters>(_ => trueLightSceneTemplateFactory()(LightEntity)),
-            _ => falseLightSceneTemplateFactory()(LightEntity));
-    }
-
-    public ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable, Func<LightSceneTemplate> trueLightSceneTemplateFactory,
-        Func<LightSceneTemplate> falseLightSceneTemplateFactory)
-    {
-        return Switch(observable,
-            new Func<ILightPipelineContext, LightParameters>(_ => trueLightSceneTemplateFactory()(LightEntity)),
-            _ => falseLightSceneTemplateFactory()(LightEntity));
-    }
-
     public ILightTransitionPipelineConfigurator Switch<TObservable>(LightParameters trueLightParameters,
         LightParameters falseLightParameters) where TObservable : IObservable<bool>
     {

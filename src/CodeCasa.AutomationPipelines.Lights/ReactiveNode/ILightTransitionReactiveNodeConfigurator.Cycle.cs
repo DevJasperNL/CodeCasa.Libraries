@@ -3,7 +3,7 @@ using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode;
 
-public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
+public partial interface ILightTransitionReactiveNodeConfigurator
 {
     /// <summary>
     /// Adds a state-based cycle trigger that rotates through the specified light parameters when triggered by <paramref name="triggerObservable"/>.
@@ -14,7 +14,7 @@ public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
     /// <param name="triggerObservable">The observable that triggers cycling to the next parameters.</param>
     /// <param name="lightParameters">The collection of light parameters to cycle through.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionReactiveNodeConfigurator<TLight> AddCycle<T>(IObservable<T> triggerObservable,
+    ILightTransitionReactiveNodeConfigurator AddCycle<T>(IObservable<T> triggerObservable,
         IEnumerable<LightParameters> lightParameters);
 
     /// <summary>
@@ -26,7 +26,7 @@ public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
     /// <param name="triggerObservable">The observable that triggers cycling to the next parameters.</param>
     /// <param name="lightParameters">The array of light parameters to cycle through.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionReactiveNodeConfigurator<TLight> AddCycle<T>(IObservable<T> triggerObservable,
+    ILightTransitionReactiveNodeConfigurator AddCycle<T>(IObservable<T> triggerObservable,
         params LightParameters[] lightParameters);
 
     /// <summary>
@@ -38,7 +38,7 @@ public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
     /// <param name="triggerObservable">The observable that triggers cycling to the next transition.</param>
     /// <param name="lightTransitions">The collection of light transitions to cycle through.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionReactiveNodeConfigurator<TLight> AddCycle<T>(IObservable<T> triggerObservable,
+    ILightTransitionReactiveNodeConfigurator AddCycle<T>(IObservable<T> triggerObservable,
         IEnumerable<LightTransition> lightTransitions);
 
     /// <summary>
@@ -50,7 +50,7 @@ public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
     /// <param name="triggerObservable">The observable that triggers cycling to the next transition.</param>
     /// <param name="lightTransitions">The array of light transitions to cycle through.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionReactiveNodeConfigurator<TLight> AddCycle<T>(IObservable<T> triggerObservable,
+    ILightTransitionReactiveNodeConfigurator AddCycle<T>(IObservable<T> triggerObservable,
         params LightTransition[] lightTransitions);
 
     /// <summary>
@@ -62,6 +62,6 @@ public partial interface ILightTransitionReactiveNodeConfigurator<TLight>
     /// <param name="triggerObservable">The observable that triggers cycling to the next state.</param>
     /// <param name="configure">An action to configure the cycle behavior.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionReactiveNodeConfigurator<TLight> AddCycle<T>(IObservable<T> triggerObservable,
-        Action<ILightTransitionCycleConfigurator<TLight>> configure);
+    ILightTransitionReactiveNodeConfigurator AddCycle<T>(IObservable<T> triggerObservable,
+        Action<ILightTransitionCycleConfigurator> configure);
 }

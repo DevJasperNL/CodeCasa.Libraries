@@ -8,52 +8,52 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
     /// Configurator for time-based toggle behavior. Quick consecutive triggers advance through all states sequentially.
     /// After a timeout period, the next trigger restarts from the beginning.
     /// </summary>
-    public interface ILightTransitionToggleConfigurator<TLight> where TLight : ILight
+    public interface ILightTransitionToggleConfigurator
     {
         /// <summary>
         /// Sets the timeout duration after which the toggle cycle restarts from the beginning.
         /// </summary>
         /// <param name="timeout">The timeout duration between triggers that determines when to restart the cycle.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> SetToggleTimeout(TimeSpan timeout);
+        ILightTransitionToggleConfigurator SetToggleTimeout(TimeSpan timeout);
 
         /// <summary>
         /// Includes the "off" state in the toggle cycle. When the light is off and toggled, it will advance to the first state in the cycle.
         /// </summary>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> IncludeOffInToggleCycle();
+        ILightTransitionToggleConfigurator IncludeOffInToggleCycle();
 
         /// <summary>
         /// Excludes the "off" state from the toggle cycle. When the light is off and toggled, it will turn on to the first state but "off" won't be part of the sequential cycle.
         /// </summary>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> ExcludeOffFromToggleCycle();
+        ILightTransitionToggleConfigurator ExcludeOffFromToggleCycle();
 
         /// <summary>
         /// Adds an "off" state to the toggle sequence.
         /// </summary>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> AddOff();
+        ILightTransitionToggleConfigurator AddOff();
 
         /// <summary>
         /// Adds an "on" state to the toggle sequence.
         /// </summary>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> AddOn();
+        ILightTransitionToggleConfigurator AddOn();
 
         /// <summary>
         /// Adds light parameters to the toggle sequence. Quick consecutive triggers will advance through all added parameter sets.
         /// </summary>
         /// <param name="lightParameters">The light parameters to add to the toggle sequence.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(LightParameters lightParameters);
+        ILightTransitionToggleConfigurator Add(LightParameters lightParameters);
 
         /// <summary>
         /// Adds light parameters created by a factory to the toggle sequence.
         /// </summary>
         /// <param name="lightParametersFactory">A factory function that creates light parameters based on the pipeline context.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(Func<ILightPipelineContext<TLight>, LightParameters?> lightParametersFactory);
+        ILightTransitionToggleConfigurator Add(Func<ILightPipelineContext, LightParameters?> lightParametersFactory);
 
         /// <summary>
         /// Adds light parameters created by a factory to the toggle sequence.
@@ -61,21 +61,21 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// </summary>
         /// <param name="lightParametersFactory">A factory function that creates light parameters based on the pipeline context and current transition.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(Func<ILightPipelineContext<TLight>, LightTransition?, LightParameters?> lightParametersFactory);
+        ILightTransitionToggleConfigurator Add(Func<ILightPipelineContext, LightTransition?, LightParameters?> lightParametersFactory);
 
         /// <summary>
         /// Adds a light transition to the toggle sequence. Quick consecutive triggers will advance through all added transitions.
         /// </summary>
         /// <param name="lightTransition">The light transition to add to the toggle sequence.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(LightTransition lightTransition);
+        ILightTransitionToggleConfigurator Add(LightTransition lightTransition);
 
         /// <summary>
         /// Adds a light transition created by a factory to the toggle sequence.
         /// </summary>
         /// <param name="lightTransitionFactory">A factory function that creates a light transition based on the pipeline context.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(Func<ILightPipelineContext<TLight>, LightTransition?> lightTransitionFactory);
+        ILightTransitionToggleConfigurator Add(Func<ILightPipelineContext, LightTransition?> lightTransitionFactory);
 
         /// <summary>
         /// Adds a light transition created by a factory to the toggle sequence.
@@ -83,7 +83,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// </summary>
         /// <param name="lightTransitionFactory">A factory function that creates a light transition based on the pipeline context and current transition.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(Func<ILightPipelineContext<TLight>, LightTransition?, LightTransition?> lightTransitionFactory);
+        ILightTransitionToggleConfigurator Add(Func<ILightPipelineContext, LightTransition?, LightTransition?> lightTransitionFactory);
 
         /// <summary>
         /// Adds a pipeline node of type <typeparamref name="TNode"/> to the toggle sequence.
@@ -91,7 +91,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// </summary>
         /// <typeparam name="TNode">The type of the pipeline node to add to the toggle sequence.</typeparam>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add<TNode>() where TNode : IPipelineNode<LightTransition>;
+        ILightTransitionToggleConfigurator Add<TNode>() where TNode : IPipelineNode<LightTransition>;
 
         /// <summary>
         /// Adds a pipeline node created by a factory to the toggle sequence.
@@ -99,13 +99,13 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// </summary>
         /// <param name="nodeFactory">A factory function that creates a pipeline node based on the pipeline context.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> Add(Func<ILightPipelineContext<TLight>, IPipelineNode<LightTransition>> nodeFactory);
+        ILightTransitionToggleConfigurator Add(Func<ILightPipelineContext, IPipelineNode<LightTransition>> nodeFactory);
 
         /// <summary>
         /// Adds a pass-through state to the toggle sequence that maintains the current light state.
         /// </summary>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> AddPassThrough();
+        ILightTransitionToggleConfigurator AddPassThrough();
 
         /// <summary>
         /// Creates a scoped toggle configuration for a specific light entity identified by its entity ID.
@@ -114,7 +114,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// <param name="configure">An action to configure the toggle for this specific light.</param>
         /// <param name="excludedLightBehaviour">Specifies the behavior for lights not included in this scoped configuration. Defaults to <see cref="ExcludedLightBehaviours.None"/>.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> ForLight(string lightEntityId, Action<ILightTransitionToggleConfigurator<TLight>> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
+        ILightTransitionToggleConfigurator ForLight(string lightEntityId, Action<ILightTransitionToggleConfigurator> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
 
         /// <summary>
         /// Creates a scoped toggle configuration for a specific light entity.
@@ -123,7 +123,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// <param name="configure">An action to configure the toggle for this specific light.</param>
         /// <param name="excludedLightBehaviour">Specifies the behavior for lights not included in this scoped configuration. Defaults to <see cref="ExcludedLightBehaviours.None"/>.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> ForLight(TLight lightEntity, Action<ILightTransitionToggleConfigurator<TLight>> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
+        ILightTransitionToggleConfigurator ForLight(ILight lightEntity, Action<ILightTransitionToggleConfigurator> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
 
         /// <summary>
         /// Creates a scoped toggle configuration for multiple light entities identified by their entity IDs.
@@ -132,7 +132,7 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// <param name="configure">An action to configure the toggle for these lights.</param>
         /// <param name="excludedLightBehaviour">Specifies the behavior for lights not included in this scoped configuration. Defaults to <see cref="ExcludedLightBehaviours.None"/>.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> ForLights(IEnumerable<string> lightEntityIds, Action<ILightTransitionToggleConfigurator<TLight>> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
+        ILightTransitionToggleConfigurator ForLights(IEnumerable<string> lightEntityIds, Action<ILightTransitionToggleConfigurator> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
 
         /// <summary>
         /// Creates a scoped toggle configuration for multiple light entities.
@@ -141,6 +141,6 @@ namespace CodeCasa.AutomationPipelines.Lights.Toggle
         /// <param name="configure">An action to configure the toggle for these lights.</param>
         /// <param name="excludedLightBehaviour">Specifies the behavior for lights not included in this scoped configuration. Defaults to <see cref="ExcludedLightBehaviours.None"/>.</param>
         /// <returns>The configurator instance for method chaining.</returns>
-        ILightTransitionToggleConfigurator<TLight> ForLights(IEnumerable<TLight> lightEntities, Action<ILightTransitionToggleConfigurator<TLight>> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
+        ILightTransitionToggleConfigurator ForLights(IEnumerable<ILight> lightEntities, Action<ILightTransitionToggleConfigurator> configure, ExcludedLightBehaviours excludedLightBehaviour = ExcludedLightBehaviours.None);
     }
 }

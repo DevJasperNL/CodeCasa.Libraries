@@ -6,7 +6,7 @@ namespace CodeCasa.AutomationPipelines.Lights
     internal static class CompositeHelper
     {
         // todo: check and filter without errors.
-        public static string[] ResolveAndValidateLightEntities<TLight>(IEnumerable<TLight> lightEntityIds, IEnumerable<string> supportedLightIds) where TLight : ILight
+        public static string[] ResolveAndValidateLightEntities(IEnumerable<ILight> lightEntityIds, IEnumerable<string> supportedLightIds)
         {
             var supportedLightIdsArray = supportedLightIds.ToArray();
             var lightLeafs = lightEntityIds.SelectMany(le => le.Flatten()).DistinctBy(l => l.Id).ToArray();
@@ -28,7 +28,7 @@ namespace CodeCasa.AutomationPipelines.Lights
             return lightLeafs.Select(l => l.Id).ToArray();
         }
 
-        public static void ValidateLightEntities<TLight>(IEnumerable<TLight> lights, string supportedLightId) where TLight : ILight
+        public static void ValidateLightEntities(IEnumerable<ILight> lights, string supportedLightId)
         {
             var lightLeafs = lights.SelectMany(le => le.Flatten()).DistinctBy(l => l.Id).ToArray();
             if (!lightLeafs.Any())

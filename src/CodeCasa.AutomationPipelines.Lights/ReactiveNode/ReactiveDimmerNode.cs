@@ -1,7 +1,6 @@
 ﻿using System.Reactive.Concurrency;
 using CodeCasa.AutomationPipelines.Lights.Nodes;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Extensions;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode
 {

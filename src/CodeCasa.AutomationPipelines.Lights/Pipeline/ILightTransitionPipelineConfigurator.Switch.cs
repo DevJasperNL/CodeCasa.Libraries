@@ -1,70 +1,12 @@
 ﻿using AutomationPipelines;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
-
-
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial interface ILightTransitionPipelineConfigurator
 {
-    /// <summary>
-    /// Registers a node that switches between two light scenes based on a boolean observable.
-    /// When the observable of type <typeparamref name="TObservable"/> emits <see langword="true"/>, 
-    /// the <paramref name="trueLightSceneTemplate"/> is activated; when it emits <see langword="false"/>, 
-    /// the <paramref name="falseLightSceneTemplate"/> is activated.
-    /// The observable is resolved from the service provider.
-    /// </summary>
-    /// <typeparam name="TObservable">The type of the observable to resolve from the service provider.</typeparam>
-    /// <param name="trueLightSceneTemplate">The scene template to activate when the observable emits true.</param>
-    /// <param name="falseLightSceneTemplate">The scene template to activate when the observable emits false.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator Switch<TObservable>(LightSceneTemplate trueLightSceneTemplate,
-        LightSceneTemplate falseLightSceneTemplate)
-        where TObservable : IObservable<bool>;
-
-    /// <summary>
-    /// Registers a node that switches between two light scenes based on the <paramref name="observable"/>.
-    /// When the observable emits <see langword="true"/>, the <paramref name="trueLightSceneTemplate"/> is activated; 
-    /// when it emits <see langword="false"/>, the <paramref name="falseLightSceneTemplate"/> is activated.
-    /// </summary>
-    /// <param name="observable">The observable that determines which scene to activate.</param>
-    /// <param name="trueLightSceneTemplate">The scene template to activate when the observable emits true.</param>
-    /// <param name="falseLightSceneTemplate">The scene template to activate when the observable emits false.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable,
-        LightSceneTemplate trueLightSceneTemplate, LightSceneTemplate falseLightSceneTemplate);
-
-    /// <summary>
-    /// Registers a node that switches between two light scenes created by factory functions based on a boolean observable.
-    /// When the observable of type <typeparamref name="TObservable"/> emits <see langword="true"/>, 
-    /// the scene from <paramref name="trueLightSceneTemplateFactory"/> is activated; when it emits <see langword="false"/>, 
-    /// the scene from <paramref name="falseLightSceneTemplateFactory"/> is activated.
-    /// The observable is resolved from the service provider.
-    /// </summary>
-    /// <typeparam name="TObservable">The type of the observable to resolve from the service provider.</typeparam>
-    /// <param name="trueLightSceneTemplateFactory">A factory function that creates the scene template for true values.</param>
-    /// <param name="falseLightSceneTemplateFactory">A factory function that creates the scene template for false values.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator Switch<TObservable>(
-        Func<LightSceneTemplate> trueLightSceneTemplateFactory, Func<LightSceneTemplate> falseLightSceneTemplateFactory)
-        where TObservable : IObservable<bool>;
-
-    /// <summary>
-    /// Registers a node that switches between two light scenes created by factory functions based on the <paramref name="observable"/>.
-    /// When the observable emits <see langword="true"/>, the scene from <paramref name="trueLightSceneTemplateFactory"/> is activated; 
-    /// when it emits <see langword="false"/>, the scene from <paramref name="falseLightSceneTemplateFactory"/> is activated.
-    /// </summary>
-    /// <param name="observable">The observable that determines which scene to activate.</param>
-    /// <param name="trueLightSceneTemplateFactory">A factory function that creates the scene template for true values.</param>
-    /// <param name="falseLightSceneTemplateFactory">A factory function that creates the scene template for false values.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator Switch(IObservable<bool> observable,
-        Func<LightSceneTemplate> trueLightSceneTemplateFactory,
-        Func<LightSceneTemplate> falseLightSceneTemplateFactory);
-
     /// <summary>
     /// Registers a node that switches between two sets of light parameters based on a boolean observable.
     /// When the observable of type <typeparamref name="TObservable"/> emits <see langword="true"/>, 

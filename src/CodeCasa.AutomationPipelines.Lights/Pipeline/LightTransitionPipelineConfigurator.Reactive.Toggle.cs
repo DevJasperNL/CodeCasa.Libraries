@@ -1,27 +1,12 @@
 ﻿using AutomationPipelines;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.Toggle;
-
-
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial class LightTransitionPipelineConfigurator
 {
-    public ILightTransitionPipelineConfigurator AddToggle<T>(IObservable<T> triggerObservable,
-        IEnumerable<LightSceneTemplate> scenes)
-    {
-        return AddReactiveNode(c => c.AddToggle(triggerObservable, scenes));
-    }
-
-    public ILightTransitionPipelineConfigurator AddToggle<T>(IObservable<T> triggerObservable,
-        params LightSceneTemplate[] scenes)
-    {
-        return AddReactiveNode(c => c.AddToggle(triggerObservable, scenes));
-    }
-
     public ILightTransitionPipelineConfigurator AddToggle<T>(IObservable<T> triggerObservable,
         IEnumerable<LightParameters> lightParameters)
     {

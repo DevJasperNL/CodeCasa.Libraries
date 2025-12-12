@@ -5,6 +5,10 @@
 /// </summary>
 public static class LightExtensions
 {
+    public static bool IsOn(this ILight light)
+    {
+        return (light.GetParameters().Brightness ?? 0) != 0;
+    }
     public static bool IsOff(this ILight light)
     {
         return (light.GetParameters().Brightness ?? 0) == 0;

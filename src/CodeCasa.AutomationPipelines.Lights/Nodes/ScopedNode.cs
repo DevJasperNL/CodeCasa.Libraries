@@ -7,11 +7,6 @@ namespace CodeCasa.AutomationPipelines.Lights.Nodes
     internal class ScopedNode<TState>(IServiceScope serviceScope, IPipelineNode<TState> innerNode)
         : IPipelineNode<TState>, IAsyncDisposable
     {
-        public void Dispose()
-        {
-            serviceScope.Dispose();
-        }
-
         public async ValueTask DisposeAsync()
         {
             // todo: make this a helper method

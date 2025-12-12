@@ -1,18 +1,15 @@
 ﻿using System.Reactive.Concurrency;
 using AutomationPipelines;
+using CodeCasa.Abstractions;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.Extensions;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
-using NetDaemon.Devices.Abstractions;
-using NetDaemon.HassModel;
-using NetDaemon.HassModel.Entities;
-using NetDaemon.Lights;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline
 {
     public partial class CompositeLightTransitionPipelineConfigurator(
         IServiceProvider serviceProvider,
-        IHaContext haContext,
         LightPipelineFactory lightPipelineFactory,
         ReactiveNodeFactory reactiveNodeFactory,
         Dictionary<string, LightTransitionPipelineConfigurator> nodeContainers,
@@ -72,14 +69,14 @@ namespace CodeCasa.AutomationPipelines.Lights.Pipeline
         public ILightTransitionPipelineConfigurator ForLight(string lightEntityId,
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights([lightEntityId], compositeNodeBuilder);
 
-        public ILightTransitionPipelineConfigurator ForLight(ILightEntityCore lightEntity,
+        public ILightTransitionPipelineConfigurator ForLight(ILight lightEntity,
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights([lightEntity], compositeNodeBuilder);
 
         public ILightTransitionPipelineConfigurator ForLights(IEnumerable<string> lightEntityIds,
             Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder)
         {
             var lightEntityIdsArray =
-                CompositeHelper.ResolveAndValidateLightEntities(haContext, lightEntityIds, NodeContainers.Keys);
+                CompositeHelper.ResolveAndValidateLightEntities(lightEntityIds, NodeContainers.Keys);
 
             if (lightEntityIdsArray.Length == NodeContainers.Count)
             {
@@ -92,13 +89,13 @@ namespace CodeCasa.AutomationPipelines.Lights.Pipeline
                 return this;
             }
 
-            compositeNodeBuilder(new CompositeLightTransitionPipelineConfigurator(serviceProvider, haContext, lightPipelineFactory, reactiveNodeFactory, NodeContainers
+            compositeNodeBuilder(new CompositeLightTransitionPipelineConfigurator(serviceProvider, lightPipelineFactory, reactiveNodeFactory, NodeContainers
                     .Where(kvp => lightEntityIdsArray.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
                 scheduler));
             return this;
         }
 
-        public ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILightEntityCore> lightEntities,
-            Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights(lightEntities.Select(e => e.EntityId), compositeNodeBuilder);
+        public ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILight> lightEntities,
+            Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder) => ForLights(lightEntities.Select(e => e.Id), compositeNodeBuilder);
     }
 }

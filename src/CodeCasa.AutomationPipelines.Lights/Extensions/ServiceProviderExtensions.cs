@@ -6,18 +6,18 @@ namespace CodeCasa.AutomationPipelines.Lights.Extensions;
 
 internal static class ServiceProviderExtensions
 {
-    public static TInstance
-        CreateInstanceWithinContext<TInstance, TLight>(this IServiceProvider serviceProvider, TLight lightEntity) where TLight : ILight =>
-        serviceProvider.CreateInstanceWithinContext<TInstance, TLight>(new LightPipelineContext<TLight>(serviceProvider, lightEntity));
+    public static T
+        CreateInstanceWithinContext<T>(this IServiceProvider serviceProvider, ILight lightEntity) =>
+        serviceProvider.CreateInstanceWithinContext<T>(new LightPipelineContext(serviceProvider, lightEntity));
 
-    public static TInstance
-        CreateInstanceWithinContext<TInstance, TLight>(this IServiceProvider serviceProvider, ILightPipelineContext<TLight> context) where TLight : ILight =>
-        (TInstance)serviceProvider.CreateInstanceWithinContext(typeof(TInstance), context);
+    public static T
+        CreateInstanceWithinContext<T>(this IServiceProvider serviceProvider, ILightPipelineContext context) =>
+        (T)serviceProvider.CreateInstanceWithinContext(typeof(T), context);
 
-    public static object CreateInstanceWithinContext<TLight>(this IServiceProvider serviceProvider, Type instanceType,
-        ILightPipelineContext<TLight> context) where TLight : ILight
+    public static object CreateInstanceWithinContext(this IServiceProvider serviceProvider, Type instanceType,
+        ILightPipelineContext context)
     {
-        var contextProvider = serviceProvider.GetRequiredService<LightPipelineContextProvider<TLight>>();
+        var contextProvider = serviceProvider.GetRequiredService<LightPipelineContextProvider>();
         contextProvider.SetLightPipelineContext(context);
         var instance = ActivatorUtilities.CreateInstance(serviceProvider, instanceType);
         contextProvider.ResetLightEntity();

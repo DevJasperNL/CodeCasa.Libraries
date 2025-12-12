@@ -2,14 +2,14 @@
 
 namespace CodeCasa.AutomationPipelines.Lights.Context;
 
-public class LightPipelineContext<TLight> : ILightPipelineContext<TLight> where TLight : ILight
+public class LightPipelineContext : ILightPipelineContext
 {
-    internal LightPipelineContext(IServiceProvider serviceProvider, TLight lightEntity)
+    internal LightPipelineContext(IServiceProvider serviceProvider, ILight lightEntity)
     {
         ServiceProvider = serviceProvider;
         LightEntity = lightEntity;
     }
 
     public IServiceProvider ServiceProvider { get; }
-    public TLight LightEntity { get; }
+    public ILight LightEntity { get; }
 }

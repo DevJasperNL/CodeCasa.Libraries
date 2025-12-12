@@ -6,41 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 using System.Reactive.Linq;
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial class CompositeLightTransitionPipelineConfigurator
 {
-    public ILightTransitionPipelineConfigurator When<TObservable>(LightSceneTemplate lightSceneTemplate)
-        where TObservable : IObservable<bool>
-    {
-        NodeContainers.Values.ForEach(b => b.When<TObservable>(lightSceneTemplate));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        LightSceneTemplate lightSceneTemplate)
-    {
-        NodeContainers.Values.ForEach(b => b.When(observable, lightSceneTemplate));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator When<TObservable>(
-        Func<LightSceneTemplate> lightSceneTemplateFactory) where TObservable : IObservable<bool>
-    {
-        NodeContainers.Values.ForEach(b => b.When<TObservable>(lightSceneTemplateFactory));
-        return this;
-    }
-
-    public ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        Func<LightSceneTemplate> lightSceneTemplateFactory)
-    {
-        NodeContainers.Values.ForEach(b => b.When(observable, lightSceneTemplateFactory));
-        return this;
-    }
-
     public ILightTransitionPipelineConfigurator When<TObservable>(LightParameters lightParameters)
         where TObservable : IObservable<bool>
     {

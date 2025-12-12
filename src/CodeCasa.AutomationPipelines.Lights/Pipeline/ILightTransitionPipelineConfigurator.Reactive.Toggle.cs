@@ -1,37 +1,12 @@
 ﻿using AutomationPipelines;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.Toggle;
-
-
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial interface ILightTransitionPipelineConfigurator
 {
-    /// <summary>
-    /// Adds a toggle node that switches between the specified light scenes when triggered by <paramref name="triggerObservable"/>.
-    /// Each trigger toggles to the next scene in the collection, wrapping back to the first after the last.
-    /// </summary>
-    /// <typeparam name="T">The type of values emitted by the trigger observable.</typeparam>
-    /// <param name="triggerObservable">The observable that triggers toggling to the next scene.</param>
-    /// <param name="scenes">The collection of light scene templates to toggle between.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator AddToggle<T>(IObservable<T> triggerObservable,
-        IEnumerable<LightSceneTemplate> scenes);
-
-    /// <summary>
-    /// Adds a toggle node that switches between the specified light scenes when triggered by <paramref name="triggerObservable"/>.
-    /// Each trigger toggles to the next scene in the array, wrapping back to the first after the last.
-    /// </summary>
-    /// <typeparam name="T">The type of values emitted by the trigger observable.</typeparam>
-    /// <param name="triggerObservable">The observable that triggers toggling to the next scene.</param>
-    /// <param name="scenes">The array of light scene templates to toggle between.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator AddToggle<T>(IObservable<T> triggerObservable,
-        params LightSceneTemplate[] scenes);
-
     /// <summary>
     /// Adds a toggle node that switches between the specified light parameters when triggered by <paramref name="triggerObservable"/>.
     /// Each trigger toggles to the next set of parameters in the collection, wrapping back to the first after the last.

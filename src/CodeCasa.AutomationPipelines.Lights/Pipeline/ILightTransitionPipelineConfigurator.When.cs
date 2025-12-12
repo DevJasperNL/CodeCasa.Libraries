@@ -1,61 +1,12 @@
 ﻿using AutomationPipelines;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.ReactiveNode;
-
-
-using NetDaemon.Lights;
-using NetDaemon.Lights.Scenes;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
 public partial interface ILightTransitionPipelineConfigurator
 {
-    /// <summary>
-    /// Registers a node that activates the given <paramref name="lightSceneTemplate"/> when the observable 
-    /// of type <typeparamref name="TObservable"/> emits <see langword="true"/>. 
-    /// When the observable emits <see langword="false"/>, inputs are passed through unchanged. 
-    /// The observable is resolved from the service provider.
-    /// </summary>
-    /// <typeparam name="TObservable">The type of the observable to resolve from the service provider.</typeparam>
-    /// <param name="lightSceneTemplate">The light scene template to activate when the observable emits true.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator When<TObservable>(LightSceneTemplate lightSceneTemplate)
-        where TObservable : IObservable<bool>;
-
-    /// <summary>
-    /// Registers a node that activates the given <paramref name="lightSceneTemplate"/> when the 
-    /// <paramref name="observable"/> emits <see langword="true"/>. 
-    /// When the observable emits <see langword="false"/>, inputs are passed through unchanged.
-    /// </summary>
-    /// <param name="observable">The observable that determines when to activate the scene.</param>
-    /// <param name="lightSceneTemplate">The light scene template to activate when the observable emits true.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        LightSceneTemplate lightSceneTemplate);
-
-    /// <summary>
-    /// Registers a node that activates a light scene template created by <paramref name="lightSceneTemplateFactory"/> 
-    /// when the observable of type <typeparamref name="TObservable"/> emits <see langword="true"/>. 
-    /// When the observable emits <see langword="false"/>, inputs are passed through unchanged. 
-    /// The observable is resolved from the service provider.
-    /// </summary>
-    /// <typeparam name="TObservable">The type of the observable to resolve from the service provider.</typeparam>
-    /// <param name="lightSceneTemplateFactory">A factory function that creates the light scene template.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator When<TObservable>(Func<LightSceneTemplate> lightSceneTemplateFactory)
-        where TObservable : IObservable<bool>;
-
-    /// <summary>
-    /// Registers a node that activates a light scene template created by <paramref name="lightSceneTemplateFactory"/> 
-    /// when the <paramref name="observable"/> emits <see langword="true"/>. 
-    /// When the observable emits <see langword="false"/>, inputs are passed through unchanged.
-    /// </summary>
-    /// <param name="observable">The observable that determines when to activate the scene.</param>
-    /// <param name="lightSceneTemplateFactory">A factory function that creates the light scene template.</param>
-    /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator When(IObservable<bool> observable,
-        Func<LightSceneTemplate> lightSceneTemplateFactory);
-
     /// <summary>
     /// Registers a node that applies the given <paramref name="lightParameters"/> when the observable 
     /// of type <typeparamref name="TObservable"/> emits <see langword="true"/>. 

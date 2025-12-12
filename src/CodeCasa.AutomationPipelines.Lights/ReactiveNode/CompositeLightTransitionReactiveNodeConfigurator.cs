@@ -1,33 +1,28 @@
 ﻿using System.Reactive.Concurrency;
 using AutomationPipelines;
+using CodeCasa.Abstractions;
 using CodeCasa.AutomationPipelines.Lights.Context;
 using CodeCasa.AutomationPipelines.Lights.Extensions;
 using CodeCasa.AutomationPipelines.Lights.Pipeline;
-using NetDaemon.Devices.Abstractions;
-
-
-using NetDaemon.HassModel;
-using NetDaemon.HassModel.Entities;
-using NetDaemon.Lights;
+using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode;
 
 public partial class CompositeLightTransitionReactiveNodeConfigurator(
     IServiceProvider serviceProvider,
-    IHaContext haContext,
     LightPipelineFactory lightPipelineFactory,
     ReactiveNodeFactory reactiveNodeFactory,
     Dictionary<string, LightTransitionReactiveNodeConfigurator> configurators,
     IScheduler scheduler)
     : ILightTransitionReactiveNodeConfigurator
 {
-    public ILightTransitionReactiveNodeConfigurator<TLight> SetName(string name)
+    public ILightTransitionReactiveNodeConfigurator SetName(string name)
     {
         configurators.Values.ForEach(c => c.SetName(name));
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> AddReactiveDimmer(IDimmer dimmer)
+    public ILightTransitionReactiveNodeConfigurator AddReactiveDimmer(IDimmer dimmer)
     {
         foreach (var configurator in configurators)
         {
@@ -36,7 +31,7 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> SetReactiveDimmerOptions(DimmerOptions dimmerOptions)
+    public ILightTransitionReactiveNodeConfigurator SetReactiveDimmerOptions(DimmerOptions dimmerOptions)
     {
         foreach (var configurator in configurators)
         {
@@ -45,12 +40,12 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> AddUncoupledDimmer(IDimmer dimmer)
+    public ILightTransitionReactiveNodeConfigurator AddUncoupledDimmer(IDimmer dimmer)
     {
         return AddUncoupledDimmer(dimmer, _ => { });
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> AddUncoupledDimmer(IDimmer dimmer, Action<DimmerOptions> dimOptions)
+    public ILightTransitionReactiveNodeConfigurator AddUncoupledDimmer(IDimmer dimmer, Action<DimmerOptions> dimOptions)
     {
         var options = new DimmerOptions();
         dimOptions(options);
@@ -58,9 +53,8 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         var dimPulses = dimmer.Dimming.ToPulsesWhenTrue(options.TimeBetweenSteps, scheduler);
         var brightenPulses = dimmer.Brightening.ToPulsesWhenTrue(options.TimeBetweenSteps, scheduler);
 
-        var configuratorsWithLightEntity = options.ValidateAndOrderMultipleLightEntityTypes(configurators)
-            .Select(kvp => (configurator: kvp.Value, lightEntity: new LightEntity(haContext, kvp.Key))).ToArray();
-        var lightEntitiesInDimOrder = configuratorsWithLightEntity.Select(t => t.lightEntity).ToArray();
+        var configuratorsWithLightEntity = options.ValidateAndOrderMultipleLightEntityTypes(configurators).Values.ToArray();
+        var lightEntitiesInDimOrder = configuratorsWithLightEntity.Select(t => t.LightEntity).ToArray();
         foreach (var containerAndLight in configuratorsWithLightEntity)
         {
             // Note: this is not strictly required, but I think it's neater and might prevent issues.
@@ -70,20 +64,20 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> AddNodeSource(IObservable<Func<ILightPipelineContext, IPipelineNode<LightTransition>?>> nodeFactorySource)
+    public ILightTransitionReactiveNodeConfigurator AddNodeSource(IObservable<Func<ILightPipelineContext, IPipelineNode<LightTransition>?>> nodeFactorySource)
     {
         configurators.Values.ForEach(c => c.AddNodeSource(nodeFactorySource));
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> ForLight(string lightEntityId, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights([lightEntityId], configure);
+    public ILightTransitionReactiveNodeConfigurator ForLight(string lightEntityId, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights([lightEntityId], configure);
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> ForLight(ILightEntityCore lightEntity, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights([lightEntity], configure);
+    public ILightTransitionReactiveNodeConfigurator ForLight(ILight lightEntity, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights([lightEntity], configure);
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> ForLights(IEnumerable<string> lightEntityIds, Action<ILightTransitionReactiveNodeConfigurator> configure)
+    public ILightTransitionReactiveNodeConfigurator ForLights(IEnumerable<string> lightEntityIds, Action<ILightTransitionReactiveNodeConfigurator> configure)
     {
         var lightEntityIdsArray =
-            CompositeHelper.ResolveAndValidateLightEntities(haContext, lightEntityIds, configurators.Keys);
+            CompositeHelper.ResolveAndValidateLightEntities(lightEntityIds, configurators.Keys);
 
         if (lightEntityIdsArray.Length == configurators.Count)
         {
@@ -97,7 +91,7 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         }
 
         configure(new CompositeLightTransitionReactiveNodeConfigurator(
-            serviceProvider, haContext,
+            serviceProvider, 
             lightPipelineFactory,
             reactiveNodeFactory,
             configurators
@@ -105,7 +99,5 @@ public partial class CompositeLightTransitionReactiveNodeConfigurator(
         return this;
     }
 
-    public ILightTransitionReactiveNodeConfigurator<TLight> ForLights(IEnumerable<ILightEntityCore> lightEntities, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights(lightEntities.Select(e => e.EntityId), configure);
-
-    private record LightEntity(IHaContext HaContext, string EntityId) : ILightEntityCore;
+    public ILightTransitionReactiveNodeConfigurator ForLights(IEnumerable<ILight> lightEntities, Action<ILightTransitionReactiveNodeConfigurator> configure) => ForLights(lightEntities.Select(e => e.EntityId), configure);
 }

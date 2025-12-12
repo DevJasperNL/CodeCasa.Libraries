@@ -2,9 +2,8 @@
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using AutomationPipelines;
+using CodeCasa.Lights;
 using Microsoft.Extensions.Logging;
-
-using NetDaemon.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode;
 

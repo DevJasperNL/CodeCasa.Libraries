@@ -6,7 +6,7 @@ using CodeCasa.Lights;
 
 namespace CodeCasa.AutomationPipelines.Lights.Pipeline;
 
-public partial interface ILightTransitionPipelineConfigurator<TLight> where TLight : ILight
+public partial interface ILightTransitionPipelineConfigurator
 {
     /// <summary>
     /// Sets the name for the current pipeline configuration.
@@ -28,7 +28,7 @@ public partial interface ILightTransitionPipelineConfigurator<TLight> where TLig
     /// </summary>
     /// <param name="nodeFactory">A factory function that creates a pipeline node based on the light pipeline context.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator AddNode(Func<ILightPipelineContext<TLight>, IPipelineNode<LightTransition>> nodeFactory);
+    ILightTransitionPipelineConfigurator AddNode(Func<ILightPipelineContext, IPipelineNode<LightTransition>> nodeFactory);
 
     /// <summary>
     /// Adds a reactive node to the pipeline configured by the specified <paramref name="configure"/> action.
@@ -73,7 +73,7 @@ public partial interface ILightTransitionPipelineConfigurator<TLight> where TLig
     /// <param name="lightEntity">The light entity to configure.</param>
     /// <param name="compositeNodeBuilder">An action to configure the pipeline for this specific light.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator ForLight(ILightEntityCore lightEntity, Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder);
+    ILightTransitionPipelineConfigurator ForLight(ILight lightEntity, Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder);
 
     /// <summary>
     /// Creates a scoped pipeline configuration for multiple light entities identified by their entity IDs.
@@ -89,5 +89,5 @@ public partial interface ILightTransitionPipelineConfigurator<TLight> where TLig
     /// <param name="lightEntities">The light entities to configure.</param>
     /// <param name="compositeNodeBuilder">An action to configure the pipeline for these lights.</param>
     /// <returns>The configurator instance for method chaining.</returns>
-    ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILightEntityCore> lightEntities, Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder);
+    ILightTransitionPipelineConfigurator ForLights(IEnumerable<ILight> lightEntities, Action<ILightTransitionPipelineConfigurator> compositeNodeBuilder);
 }
