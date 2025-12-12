@@ -5,6 +5,11 @@
 /// </summary>
 public static class LightExtensions
 {
+    public static bool IsOff(this ILight light)
+    {
+        return (light.GetParameters().Brightness ?? 0) == 0;
+    }
+
     /// <summary>
     /// Flattens a light hierarchy into a single-dimensional array of leaf lights.
     /// </summary>

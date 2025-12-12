@@ -6,9 +6,14 @@
 public interface ILight
 {
     /// <summary>
+    /// Gets the unique identifier for this light.
+    /// </summary>
+    public string Id { get; }
+
+    /// <summary>
     /// Gets the parameters of the light.
     /// </summary>
-    LightParameters Parameters { get; }
+    LightParameters GetParameters();
     
     /// <summary>
     /// Applies a transition to the light.

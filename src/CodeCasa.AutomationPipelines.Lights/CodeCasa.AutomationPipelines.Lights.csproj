@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeCasa.Abstractions\CodeCasa.Abstractions.csproj" />
+    <ProjectReference Include="..\CodeCasa.AutomationPipelines\CodeCasa.AutomationPipelines.csproj" />
+    <ProjectReference Include="..\CodeCasa.Lights\CodeCasa.Lights.csproj" />
+  </ItemGroup>
+
+</Project>

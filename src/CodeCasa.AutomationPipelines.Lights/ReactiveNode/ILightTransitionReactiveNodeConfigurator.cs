@@ -1,0 +1,97 @@
+﻿using AutomationPipelines;
+using CodeCasa.Abstractions;
+using CodeCasa.AutomationPipelines.Lights.Context;
+using CodeCasa.Lights;
+
+namespace CodeCasa.AutomationPipelines.Lights.ReactiveNode;
+
+public partial interface ILightTransitionReactiveNodeConfigurator<TLight> where TLight : ILight
+{
+    /// <summary>
+    /// Sets the name for the current reactive node configuration.
+    /// </summary>
+    /// <param name="name">The name to assign to the reactive node.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> SetName(string name);
+
+    /// <summary>
+    /// Adds a reactive dimmer control that will be reset when the reactive node activates a new node.
+    /// Responds to dimmer events and adjusts light parameters accordingly.
+    /// Multiple reactive dimmers can be added and will behave as a group.
+    /// </summary>
+    /// <param name="dimmer">The dimmer device to add to the reactive node.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> AddReactiveDimmer(IDimmer dimmer);
+
+    /// <summary>
+    /// Sets the configuration options for reactive dimmer controls in this node.
+    /// </summary>
+    /// <param name="dimmerOptions">The dimmer options to configure dimmer behavior.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> SetReactiveDimmerOptions(DimmerOptions dimmerOptions);
+
+    /// <summary>
+    /// Adds an uncoupled dimmer control that operates independently without being affected by the reactive node's behavior.
+    /// The dimmer will not be reset when the reactive node activates a new node.
+    /// </summary>
+    /// <param name="dimmer">The dimmer device to add as an uncoupled control.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> AddUncoupledDimmer(IDimmer dimmer);
+
+    /// <summary>
+    /// Adds an uncoupled dimmer control with custom configuration options.
+    /// The dimmer operates independently without being affected by the reactive node's behavior.
+    /// The dimmer will not be reset when the reactive node activates a new node.
+    /// </summary>
+    /// <param name="dimmer">The dimmer device to add as an uncoupled control.</param>
+    /// <param name="dimOptions">An action to configure the dimmer options.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> AddUncoupledDimmer(IDimmer dimmer, Action<DimmerOptions> dimOptions);
+
+    /// <summary>
+    /// Adds a dynamic node source that activates a new node in the reactive node each time the observable emits a factory.
+    /// The emitted factory is invoked to create and activate the new pipeline node.
+    /// </summary>
+    /// <param name="nodeFactorySource">An observable that emits factory functions for creating pipeline nodes.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight>
+        AddNodeSource(
+            IObservable<Func<ILightPipelineContext<TLight>, IPipelineNode<LightTransition>?>>
+                nodeFactorySource);
+
+    /// <summary>
+    /// Creates a scoped reactive node configuration for a specific light entity identified by its entity ID.
+    /// </summary>
+    /// <param name="lightEntityId">The entity ID of the light to configure.</param>
+    /// <param name="configure">An action to configure the reactive node for this specific light.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> ForLight(string lightEntityId,
+        Action<ILightTransitionReactiveNodeConfigurator<TLight>> configure);
+
+    /// <summary>
+    /// Creates a scoped reactive node configuration for a specific light entity.
+    /// </summary>
+    /// <param name="lightEntity">The light entity to configure.</param>
+    /// <param name="configure">An action to configure the reactive node for this specific light.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> ForLight(TLight lightEntity,
+        Action<ILightTransitionReactiveNodeConfigurator<TLight>> configure);
+
+    /// <summary>
+    /// Creates a scoped reactive node configuration for multiple light entities identified by their entity IDs.
+    /// </summary>
+    /// <param name="lightEntityIds">The entity IDs of the lights to configure.</param>
+    /// <param name="configure">An action to configure the reactive node for these lights.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> ForLights(IEnumerable<string> lightEntityIds,
+        Action<ILightTransitionReactiveNodeConfigurator<TLight>> configure);
+
+    /// <summary>
+    /// Creates a scoped reactive node configuration for multiple light entities.
+    /// </summary>
+    /// <param name="lightEntities">The light entities to configure.</param>
+    /// <param name="configure">An action to configure the reactive node for these lights.</param>
+    /// <returns>The configurator instance for method chaining.</returns>
+    ILightTransitionReactiveNodeConfigurator<TLight> ForLights(IEnumerable<TLight> lightEntities,
+        Action<ILightTransitionReactiveNodeConfigurator<TLight>> configure);
+}
